@@ -1,17 +1,19 @@
 <script>
-  import { onMount } from "svelte";
-
-  onMount(() => {
-    const root = document.querySelector(".code");
-    if (root) {
-      var myCodeMirror = CodeMirror(root, {
-        value: "function myScript(){return 100;}\n",
-        lineNumbers: true,
-        matchBrackets: true,
-        mode: "text/typescript"
-      });
-    }
-  });
+  import Editor from "../components/Editor.svelte";
+  import RunButton from "../components/RunButton.svelte";
+  import Console from "../components/Console.svelte";
 </script>
 
-<section class="code" />
+<style>
+  main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+</style>
+
+<main>
+  <Editor />
+  <RunButton />
+  <Console />
+</main>
