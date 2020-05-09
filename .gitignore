@@ -1,0 +1,12 @@
+# NPM
+.DS_Store
+/node_modules/
+yarn-error.log
+
+# Sapper
+/src/node_modules/@sapper/
+/__sapper__/
+
+# CF Workers
+dist
+worker
