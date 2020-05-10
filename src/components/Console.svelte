@@ -12,7 +12,6 @@
     });
 
     consoleStore.subscribe(({ value }) => {
-      console.log("sdsd", value);
       editor.setValue(value);
     });
   });

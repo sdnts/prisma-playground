@@ -10,3 +10,6 @@ yarn-error.log
 # CF Workers
 dist
 worker
+
+# Misc
+prisma/.env

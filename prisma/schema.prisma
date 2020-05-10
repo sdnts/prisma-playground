@@ -1,0 +1,14 @@
+datasource db {
+  provider = "postgres"
+  url      = env("POSTGRES_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Workspace {
+  id     String @id
+  schema String
+  code   String
+}

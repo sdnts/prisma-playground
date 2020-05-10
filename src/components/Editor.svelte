@@ -1,22 +1,12 @@
 <script>
   import { onMount } from "svelte";
 
+  export let code = "";
+
   onMount(() => {
     const root = document.querySelector(".code");
     const editor = CodeMirror(root, {
-      value: `import { PrismaClient } from '@prisma/client'
-			
-const prisma = new PrismaClient();
-
-const main = async () => {
-	const users = await prisma.user.findMany();
-	console.log(users);
-}
-
-main()
-	.catch(e => console.log(e))
-	.finally(() => prisma.disconnect())
-			`,
+      value: code,
       lineNumbers: true,
       matchBrackets: true,
       mode: "text/typescript",

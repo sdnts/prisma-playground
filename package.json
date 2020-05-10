@@ -1,6 +1,5 @@
 {
   "name": "prisma-client-workspace",
-  "description": "A workspace with Prisma Client initialized",
   "main": "index.js",
   "version": "0.0.1",
   "scripts": {
@@ -8,12 +7,17 @@
     "build": "sapper build",
     "export": "sapper export",
     "start": "node __sapper__/build",
-    "deploy": "npm run build && wrangler publish"
+    "deploy": "npm run export && wrangler publish",
+    "prisma:migrate": "prisma migrate save --experimental && prisma migrate up --experimental",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
+    "@prisma/cli": "^2.0.0-beta.4",
+    "@prisma/client": "^2.0.0-beta.4",
     "compression": "^1.7.1",
     "polka": "next",
-    "sirv": "^0.4.0"
+    "sirv": "^0.4.0",
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "@cloudflare/kv-asset-handler": "^0.0.10",
