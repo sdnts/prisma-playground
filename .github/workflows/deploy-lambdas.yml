@@ -9,13 +9,11 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
 
-defaults:
-  run:
-    working-directory: packages/lambdas
-
 jobs:
   deploy-workspace:
     runs-on: ubuntu-latest
+    run:
+      working-directory: packages/lambdas/workspace
     steps:
       - uses: actions/checkout@master
       - name: install
