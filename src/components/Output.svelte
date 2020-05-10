@@ -1,6 +1,8 @@
 <script>
   import { onMount } from "svelte";
+
   import { visible, output } from "../stores/output";
+  import Tab from "./Tab.svelte";
 
   onMount(() => {
     const root = document.querySelector(".output");
@@ -29,20 +31,18 @@
   header {
     border-top: 1px solid var(--border-color);
     display: flex;
-    flex-direction: row-reverse;
-    flex: 0 0 20px;
-    padding: 5px 10px;
+    flex: 0 0 30px;
+    padding: 0 10px;
   }
 
   button {
+    flex: 1;
     border: 0;
     padding: 0;
-    height: 20px;
-    width: 20px;
+    height: 100%;
     background-color: inherit;
     color: var(--icon-color);
     font-size: 18px;
-    transition: all 0.3s;
     position: relative;
     cursor: pointer;
   }
@@ -51,8 +51,7 @@
     content: "▴";
     font-size: 24px;
     position: absolute;
-    top: -8px;
-    left: 0;
+    top: 0;
     right: 0;
   }
 
@@ -62,6 +61,11 @@
 
   button.open {
     transform: rotate(180deg);
+  }
+
+  button.open:after {
+    left: 0;
+    right: initial;
   }
 
   .output {
@@ -75,6 +79,7 @@
 
 <section style="flex: 0 0 {$visible ? 300 : 30}px;">
   <header>
+    <Tab active={$visible} on:click={toggle}>Output</Tab>
     <button class:open={$visible} on:click={toggle} />
   </header>
   <div class="output" class:visible={$visible} />
