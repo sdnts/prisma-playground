@@ -2,7 +2,7 @@ const { v4: uuid } = require("uuid");
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
-export const DEFAULT_SCHEMA = `
+const DEFAULT_SCHEMA = `
 model User {
   id     Int     @id
   name   String
@@ -16,7 +16,7 @@ model Post {
 }
 `.trim();
 
-export const DEFAULT_CODE = `
+const DEFAULT_CODE = `
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient();
