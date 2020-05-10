@@ -1,0 +1,23 @@
+on:
+  push:
+    paths:
+      - "packages/frontend/**"
+name: Deploy Frontend
+env:
+  CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+  CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+  CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
+defaults:
+  run:
+    working-directory: packages/frontend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: install
+        run: npm install
+      - name: deploy
+        run: npm run deploy
