@@ -1,6 +1,19 @@
+:root {
+  --bg-color: #212121;
+  --fg-color: #eeffff;
+  --accent-color: #6eeb83;
+
+  --border-color: #545454;
+  --icon-color: #545454;
+
+  --shadow: 20px 20px 60px #151515, -20px -20px 60px #555555;
+}
+
 body {
   margin: 0;
   padding: 0;
+  background-color: var(--bg-color);
+  font-family: monospace;
 }
 
 #sapper {
