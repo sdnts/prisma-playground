@@ -1,7 +1,0 @@
-{
-  "name": "db",
-  "version": "0.0.1",
-  "scripts": {
-    "migrate": "prisma migrate save --experimental && prisma migrate up --experimental"
-  }
-}
