@@ -10,5 +10,5 @@ zip -r archive.zip . \
     -x "prisma/migrations/*" \
     -x "prisma/.env" \
     -x "node_modules/@prisma/cli/*"
-aws lambda update-function-code --function-name PrismaWorkspaceAPI --zip-file fileb://archive.zip
+aws lambda update-function-code --function-name PrismaPlaygroundWorkspace --zip-file fileb://archive.zip
 rm -rf archive.zip
