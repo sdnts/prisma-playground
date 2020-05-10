@@ -1,0 +1,9 @@
+{
+  "name": "migrate",
+  "version": "0.0.1",
+  "scripts": {
+    "deploy": "./deploy.sh"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

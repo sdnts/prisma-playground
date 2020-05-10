@@ -4,11 +4,8 @@ set -e
 
 rm -rf archive.zip
 zip -r archive.zip . \
-    -x "*.json" \
-    -x "*.lock" \
     -x "*.sh" \
     -x "**/*.d.ts" \
-    -x "**/*.json" \
     -x "**/*.md" \
     -x "prisma/migrations/*" \
     -x "prisma/.env" \
