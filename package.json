@@ -1,6 +1,5 @@
 {
   "name": "prisma-client-workspace",
-  "main": "index.js",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
@@ -20,8 +19,6 @@
     "uuid": "^8.0.0"
   },
   "devDependencies": {
-    "@cloudflare/kv-asset-handler": "^0.0.10",
-    "@cloudflare/wrangler": "^1.9.0",
     "@rollup/plugin-commonjs": "11.0.2",
     "@rollup/plugin-node-resolve": "^7.0.0",
     "@rollup/plugin-replace": "^2.2.0",
