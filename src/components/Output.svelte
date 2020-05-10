@@ -1,34 +1,33 @@
 <script>
   import { onMount } from "svelte";
-  import consoleStore from "../stores/console";
+  import { visible, output } from "../stores/output";
 
   onMount(() => {
-    const root = document.querySelector(".console");
+    const root = document.querySelector(".output");
     const editor = CodeMirror(root, {
-      value: "[]",
-      mode: "text/javascript",
+      value: $output,
+      mode: "application/ld+json",
       theme: "material-darker",
       readOnly: true
     });
 
-    consoleStore.subscribe(({ value }) => {
-      editor.setValue(value);
-    });
+    output.subscribe(o => editor.setValue(o));
   });
+
+  let toggle = () => visible.set(!$visible);
 </script>
 
 <style>
   section {
     display: flex;
     flex-direction: column;
-    background-color: #212121;
     font-family: monospace;
     transition: all 0.3s;
     overflow: hidden;
   }
 
   header {
-    border-top: 1px solid #545454;
+    border-top: 1px solid var(--border-color);
     display: flex;
     flex-direction: row-reverse;
     flex: 0 0 20px;
@@ -41,7 +40,7 @@
     height: 20px;
     width: 20px;
     background-color: inherit;
-    color: #545454;
+    color: var(--icon-color);
     font-size: 18px;
     transition: all 0.3s;
     position: relative;
@@ -58,25 +57,25 @@
   }
 
   button:hover {
-    color: #eeffff;
+    color: var(--fg-color);
   }
 
   button.open {
     transform: rotate(180deg);
   }
 
-  .console {
+  .output {
     padding: 0 20px;
   }
 
-  .console.visible {
+  .output.visible {
     flex: 1;
   }
 </style>
 
-<section style="flex: 0 0 {$consoleStore.visible ? 300 : 30}px;">
+<section style="flex: 0 0 {$visible ? 300 : 30}px;">
   <header>
-    <button class:open={$consoleStore.visible} on:click={consoleStore.toggle} />
+    <button class:open={$visible} on:click={toggle} />
   </header>
-  <div class="console" class:visible={$consoleStore.visible} />
+  <div class="output" class:visible={$visible} />
 </section>

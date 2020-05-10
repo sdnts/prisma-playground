@@ -7,7 +7,7 @@
     "build": "sapper build",
     "export": "sapper export",
     "start": "node __sapper__/build",
-    "deploy": "npm run export && wrangler publish",
+    "deploy": "yarn export && wrangler publish",
     "prisma:migrate": "prisma migrate save --experimental && prisma migrate up --experimental",
     "prisma:generate": "prisma generate"
   },
