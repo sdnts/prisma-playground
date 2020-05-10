@@ -8,9 +8,10 @@ env:
 
 jobs:
   deploy-workspace:
+    defaults:
+      run:
+        working-directory: packages/lambdas/workspace
     runs-on: ubuntu-latest
-    run:
-      working-directory: packages/lambdas/workspace
     steps:
       - uses: actions/checkout@master
       - name: install
