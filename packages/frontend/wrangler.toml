@@ -1,4 +1,4 @@
-name = "prisma"
+name = "prisma-playground"
 type = "webpack"
 workers_dev = true
 
