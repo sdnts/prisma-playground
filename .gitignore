@@ -1,15 +1,15 @@
 # NPM
 .DS_Store
-/node_modules/
+packages/frontend/node_modules/
 yarn-error.log
 
 # Sapper
-/src/node_modules/@sapper/
-/__sapper__/
+packages/frontend/src/node_modules/@sapper/
+packages/frontend/__sapper__/
 
 #CF Workers
-dist
-worker
+packages/frontend/dist
+packages/frontend/worker
 
 # Misc
-prisma/.env
+packages/frontend/prisma/.env
