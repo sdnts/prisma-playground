@@ -7,5 +7,9 @@ yarn-error.log
 /src/node_modules/@sapper/
 /__sapper__/
 
+#CF Workers
+dist
+worker
+
 # Misc
 prisma/.env

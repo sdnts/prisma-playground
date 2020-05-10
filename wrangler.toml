@@ -1,9 +1,6 @@
-name = "prisma-client-workspace"
+name = "prisma"
 type = "webpack"
-account_id = "80fc72b66f7c5acd95b33a5460f58c88"
 workers_dev = true
-route = ""
-zone_id = ""
 
 [site]
 entry-point = "."
