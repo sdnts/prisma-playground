@@ -1,6 +1,8 @@
 # NPM
 .DS_Store
 packages/frontend/node_modules/
+packages/lambdas/node_modules/
+packages/db/node_modules/
 yarn-error.log
 
 # Sapper
@@ -12,4 +14,4 @@ packages/frontend/dist
 packages/frontend/worker
 
 # Misc
-packages/frontend/prisma/.env
+packages/db/prisma/.env
