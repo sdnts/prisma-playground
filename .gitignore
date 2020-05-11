@@ -11,3 +11,5 @@ packages/frontend/worker
 
 # Lambdas
 packages/lambda/node_modules/
+packages/lambda/.env
+packages/lambda/archive.zip

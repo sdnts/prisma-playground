@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "test": "./scripts/test.sh",
-    "deploy": "./scripts/deploy.sh",
+    "deploy": "node ./scripts/deploy.js",
     "generate": "prisma generate",
     "migrate": "prisma migrate save --experimental && prisma migrate up --experimental"
   },

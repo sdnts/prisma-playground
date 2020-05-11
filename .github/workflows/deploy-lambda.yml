@@ -1,19 +1,18 @@
 on:
   push:
     paths:
-      - "packages/lambdas/**"
-name: Deploy Lambdas
+      - "packages/lambda/**"
+name: Deploy Lambda
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  DB_URL: ${{ secrets.DB_URL }}
 
 jobs:
   deploy-workspace:
     defaults:
       run:
-        working-directory: packages/lambdas/workspace
+        working-directory: packages/lambda
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
