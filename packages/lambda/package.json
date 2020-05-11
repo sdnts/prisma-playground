@@ -1,5 +1,5 @@
 {
-  "name": "workspace",
+  "name": "lambda",
   "version": "0.0.1",
   "scripts": {
     "test": "./scripts/test.sh",
