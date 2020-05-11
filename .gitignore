@@ -10,10 +10,4 @@ packages/frontend/dist
 packages/frontend/worker
 
 # Lambdas
-packages/lambdas/execute/node_modules/
-packages/lambdas/execute/archive.zip
-packages/lambdas/migrate/node_modules/
-packages/lambdas/migrate/archive.zip
-packages/lambdas/workspace/node_modules/
-packages/lambdas/workspace/archive.zip
-packages/lambdas/workspace/prisma/.env
+packages/lambda/node_modules/
