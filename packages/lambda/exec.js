@@ -5,7 +5,7 @@ module.exports = async function exec(command, options) {
     child_process.exec(command, options, (error, stdout, stderr) => {
       if (error) {
         console.log('[exec] stderr:', stderr)
-        reject(err)
+        reject(error)
       };
       return resolve(stdout);
     })
