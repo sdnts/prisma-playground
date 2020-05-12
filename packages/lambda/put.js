@@ -1,3 +1,5 @@
+import { LAMBDA_WRITABLE_LOCATION } from "./constants";
+
 module.exports = async function put(event) {
   const { id, schema, code } = JSON.parse(event.body);
 
@@ -9,20 +11,9 @@ module.exports = async function put(event) {
     },
   });
 
-  // Generate Prisma Client for this schema
-  await exec(
-    path.resolve(__dirname, "./node_modules/.bin/prisma"),
-    ["generate"],
-    {
-      cwd: LAMBDA_WRITABLE_LOCATION,
-      env: {
-        ...process.env,
-        DB_URL: workspaceDbUrl,
-      },
-    }
-  );
+  // Fetch this workspace from S3
 
-  // And run it
+  // And run saved code against it
 
   return {
     statusCode: 200,

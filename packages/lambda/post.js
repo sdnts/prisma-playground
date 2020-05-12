@@ -38,11 +38,16 @@ module.exports = async function post() {
   // First, set up a Prisma project at tmpDirectory
   await fs.mkdir(tmpDirectory);
   await fs.writeFile(`${tmpDirectory}/schema.prisma`, workspaceSchema);
+  console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
 
   // Then, provision a database & run an initial migration to get it to the correct state
   await exec(
-    path.resolve(__dirname, "./node_modules/.bin/prisma"),
-    ["migrate", "save", "--create-db", "--name", '"Initial"', "--experimental"],
+    [
+      path.resolve(__dirname, "./node_modules/.bin/prisma"),
+      "migrate save --experimental",
+      "--create-db",
+      '--name "Initial"',
+    ].join(" "),
     {
       cwd: tmpDirectory,
       env: {
@@ -52,8 +57,10 @@ module.exports = async function post() {
     }
   );
   await exec(
-    path.resolve(__dirname, "./node_modules/.bin/prisma"),
-    ["migrate", "up", "--experimental"],
+    [
+      path.resolve(__dirname, "./node_modules/.bin/prisma"),
+      "migrate up --experimental",
+    ].join(" "),
     {
       cwd: tmpDirectory,
       env: {
@@ -62,12 +69,14 @@ module.exports = async function post() {
       },
     }
   );
+  console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
 
   try {
     // Generate Prisma Client for the workspace
     await exec(
-      path.resolve(__dirname, "./node_modules/.bin/prisma"),
-      ["generate"],
+      [path.resolve(__dirname, "./node_modules/.bin/prisma"), "generate"].join(
+        " "
+      ),
       {
         cwd: tmpDirectory,
         env: {
@@ -78,22 +87,23 @@ module.exports = async function post() {
     );
   } catch (e) {
     // For some reason, `generate` throws an `npm` error, but generates correctly. Ignore it
-    console.error(e);
+    console.error("Error generating Client: ", e);
   }
+  console.log(`✅ Generated Prisma Client for workspace ${workspaceId}`);
 
   // Clean up `tmpDirectory` directory by removing unnecessary files
   await exec(
-    "rm",
     [
-      "-rf",
-      ".DS_Store",
+      "rm -rf",
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
       "node_modules/@prisma/client/generator-build",
       "node_modules/@prisma/client/scripts",
-    ],
+      "node_modules/.prisma/client/*.d.ts",
+    ].join(" "),
     { shell: true, cwd: tmpDirectory }
   );
+  console.log(`✅ Removed unnecessary files from ${workspaceId}`);
 
   // Upload `tmpDirectory` directory to S3 for storage
   await uploadDir(tmpDirectory, {

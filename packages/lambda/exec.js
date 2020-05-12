@@ -1,17 +1,10 @@
-const { spawn } = require("child_process");
+const child_process = require("child_process");
 
-module.exports = async function exec(command, args, options) {
-  return new Promise((resolve, reject) => {
-    let p = spawn(command, args, options);
-    let error = "";
-
-    p.stderr.on("data", (e) => (error += e.toString()));
-    p.on("close", (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(error);
-      }
-    });
-  });
+module.exports = async function exec(command, options) {
+  return new Promise((resolve, reject) =>
+    child_process.exec(command, options, (err, stdout, stderr) => {
+      if (err) reject({ error, stderr });
+      return resolve(stdout);
+    })
+  );
 };
