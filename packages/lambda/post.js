@@ -1,4 +1,3 @@
-const path = require("path");
 const { v4: uuid } = require("uuid");
 const aws = require("aws-sdk");
 const { PrismaClient } = require("@prisma/client");
@@ -27,6 +26,7 @@ const prisma = new PrismaClient();
 
 module.exports = async function post() {
   const workspaceId = uuid();
+  // const workspaceId = 'abcd';
   const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${workspaceId}`;
   const workspaceSchema = DEFAULT_SCHEMA;
   const workspaceCode = DEFAULT_CODE;
@@ -35,28 +35,21 @@ module.exports = async function post() {
   // Prepare the `tmpDirectory` directory, then upload it all to S3
 
   // First, set up a Prisma project at tmpDirectory
-  try {
-    await exec(`mkdir ${tmpDirectory}`)
-    console.log('MKDIR')
-    await exec(`echo "${workspaceSchema}" > ${tmpDirectory}/schema.prisma`)
-    console.log('CREATE SCHEMA')
-    await exec(`mkdir node_modules`, { cwd: tmpDirectory })
-    console.log('CREATE NODE_MODULES')
-    await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`)
-    console.log('COPY @PRISMA')
-    await exec('ln -sF ./node_modules/@prisma/cli/build/index.js prisma', { cwd: tmpDirectory })
-    console.log('CREATE SYMLINK')
-    console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
-  }
-  catch (e) {
-    console.log(e)
-    console.log(await exec('ls -a', { cwd: tmpDirectory }))
-    throw e.message;
-  }
+  await exec(`mkdir ${tmpDirectory}`)
+  console.log('MKDIR')
+  // await exec(`echo "${${tmpDirectory}/schema.prisma}" > ${tmpDirectory}/schema.prisma`)
+  await exec(`cat <<EOF > ${tmpDirectory}/schema.prisma \n${workspaceSchema}\nEOF`)
+  console.log('CREATE SCHEMA')
+  await exec(`mkdir node_modules`, { cwd: tmpDirectory })
+  console.log('CREATE NODE_MODULES')
+  await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`)
+  console.log('COPY @PRISMA')
+  await exec('ln -sF ./node_modules/@prisma/cli/build/index.js prisma', { cwd: tmpDirectory })
+  console.log('CREATE SYMLINK')
+  console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
 
   // Then, provision a database & run an initial migration to get it to the correct state
   try {
-    console.log('MIGRATE UP')
     await exec(
       [
         "./prisma migrate save --experimental",
@@ -71,7 +64,7 @@ module.exports = async function post() {
         },
       }
     );
-    console.log('MIGRATE SAVE')
+    console.log('MIGRATE UP')
     await exec(
       "./prisma migrate up --experimental",
       {
@@ -82,16 +75,10 @@ module.exports = async function post() {
         },
       }
     );
+    console.log('MIGRATE SAVE')
     console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
   } catch (e) {
-    console.log('Error during migrate')
-    console.log(e)
-    console.log(e.message)
-    console.log(e.stack)
-    console.log(JSON.stringify(e))
-    console.log(JSON.stringify(e.toString()))
-    console.log(JSON.stringify(e.message))
-    console.log(JSON.stringify(e.stack))
+    console.log('Error during migrate', e)
     throw e.toString()
   }
 
@@ -107,6 +94,7 @@ module.exports = async function post() {
         },
       }
     );
+    console.log('PRISMA GENERATE')
   } catch (e) {
     // For some reason, `generate` throws an `npm` error, but generates correctly. Ignore it
     console.error("Error generating Prisma Client: ", e);

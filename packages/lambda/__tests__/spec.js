@@ -1,5 +1,4 @@
 const { handler: lambda } = require("../index");
-const uploadDir = require("../uploadDir");
 
 const event = {
   httpMethod: "POST",
