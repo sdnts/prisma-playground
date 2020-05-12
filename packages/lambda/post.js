@@ -1,5 +1,4 @@
 const { v4: uuid } = require("uuid");
-const aws = require("aws-sdk");
 const { PrismaClient } = require("@prisma/client");
 
 const exec = require("./exec");
@@ -11,17 +10,6 @@ const {
   LAMBDA_WRITABLE_LOCATION,
 } = require("./constants");
 
-aws.config.update({
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-  region: process.env.AWS_REGION,
-});
-
-const s3 = new aws.S3({
-  apiVersion: "2006-03-01",
-});
 const prisma = new PrismaClient();
 
 module.exports = async function post() {
@@ -80,11 +68,14 @@ module.exports = async function post() {
   } catch (e) {
     console.log('Error during migrate', e)
     console.log(await exec('ls -a', { cwd: tmpDirectory }))
-    await uploadDir(tmpDirectory, {
-      s3,
-      bucket: process.env.AWS_S3_BUCKET,
-    });
-    throw e.toString()
+    await uploadDir(tmpDirectory);
+    return {
+      statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ error: e }),
+    }
   }
 
   try {
@@ -131,10 +122,7 @@ module.exports = async function post() {
   console.log(`✅ Removed unnecessary files from ${workspaceId}`);
 
   // Upload `tmpDirectory` directory to S3 for storage
-  await uploadDir(tmpDirectory, {
-    s3,
-    bucket: process.env.AWS_S3_BUCKET,
-  });
+  await uploadDir(tmpDirectory);
 
   // Then, create the workspace
   const workspace = await prisma.workspace.create({
@@ -151,6 +139,6 @@ module.exports = async function post() {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ workspace }),
+    body: JSON.stringify({ error: null, workspace }),
   };
 };
