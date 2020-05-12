@@ -5,7 +5,7 @@ const exec = require("../exec");
 async function main() {
   // We're going through all these hoops for two reasons:
   // 1. To highly optimize the Lambda package's size (although there's still room for improvement)
-  // 2.To ensure that the correct query-engine and migration-engine binaries exist in the package
+  // 2. To ensure that the correct query-engine and migration-engine binaries exist in the package
 
   const input = path.resolve(__dirname, "..");
   const output = path.resolve(__dirname, "../archive");

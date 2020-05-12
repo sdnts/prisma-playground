@@ -41,35 +41,41 @@ module.exports = async function post() {
   console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
 
   // Then, provision a database & run an initial migration to get it to the correct state
-  await exec(
-    [
-      path.resolve(__dirname, "./node_modules/.bin/prisma"),
-      "migrate save --experimental",
-      "--create-db",
-      '--name "Initial"',
-    ].join(" "),
-    {
-      cwd: tmpDirectory,
-      env: {
-        ...process.env,
-        DB_URL: workspaceDbUrl,
-      },
-    }
-  );
-  await exec(
-    [
-      path.resolve(__dirname, "./node_modules/.bin/prisma"),
-      "migrate up --experimental",
-    ].join(" "),
-    {
-      cwd: tmpDirectory,
-      env: {
-        ...process.env,
-        DB_URL: workspaceDbUrl,
-      },
-    }
-  );
-  console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
+  try {
+
+    await exec(
+      [
+        path.resolve(__dirname, "./node_modules/.bin/prisma"),
+        "migrate save --experimental",
+        "--create-db",
+        '--name "Initial"',
+      ].join(" "),
+      {
+        cwd: tmpDirectory,
+        env: {
+          ...process.env,
+          DB_URL: workspaceDbUrl,
+        },
+      }
+    );
+    await exec(
+      [
+        path.resolve(__dirname, "./node_modules/.bin/prisma"),
+        "migrate up --experimental",
+      ].join(" "),
+      {
+        cwd: tmpDirectory,
+        env: {
+          ...process.env,
+          DB_URL: workspaceDbUrl,
+        },
+      }
+    );
+    console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
+  } catch (e) {
+    console.log(e.toString())
+    throw e
+  }
 
   try {
     // Generate Prisma Client for the workspace
