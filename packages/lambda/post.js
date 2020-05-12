@@ -20,22 +20,15 @@ module.exports = async function post() {
   const workspaceCode = DEFAULT_CODE;
   const tmpDirectory = `${LAMBDA_WRITABLE_LOCATION}/${workspaceId}`;
 
-  console.log('Working with database at: ', workspaceDbUrl)
-
   // Prepare the `tmpDirectory` directory, then upload it all to S3
 
   // First, set up a Prisma project at tmpDirectory
   await exec(`mkdir ${tmpDirectory}`)
-  console.log('MKDIR')
   // await exec(`echo "${${tmpDirectory}/schema.prisma}" > ${tmpDirectory}/schema.prisma`)
   await exec(`cat <<EOF > ${tmpDirectory}/schema.prisma \n${workspaceSchema}\nEOF`)
-  console.log('CREATE SCHEMA')
   await exec(`mkdir node_modules`, { cwd: tmpDirectory })
-  console.log('CREATE NODE_MODULES')
   await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`)
-  console.log('COPY @PRISMA')
   await exec(`ln -sf node_modules/@prisma/cli/build/index.js ./prisma`, { cwd: tmpDirectory })
-  console.log('CREATE SYMLINK')
   console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
 
   // Then, provision a database & run an initial migration to get it to the correct state
@@ -47,6 +40,7 @@ module.exports = async function post() {
         '--name "Initial"',
       ].join(" "),
       {
+        debug: true,
         cwd: tmpDirectory,
         env: {
           ...process.env,
@@ -59,6 +53,7 @@ module.exports = async function post() {
     await exec(
       "./prisma migrate up --experimental",
       {
+        debug: true,
         cwd: tmpDirectory,
         env: {
           ...process.env,
@@ -71,7 +66,6 @@ module.exports = async function post() {
     console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
   } catch (e) {
     console.log('Error during migrate', e)
-    console.log(await exec(`ls -R /tmp/ | awk ' /:$/&&f{s=$0;f=0} /:$/&&!f{sub(/:$/,"");s=$0;f=1;next} NF&&f{ print s"/"$0 }'`, { cwd: tmpDirectory }))
     await uploadDir(tmpDirectory);
     return {
       statusCode: 500,
