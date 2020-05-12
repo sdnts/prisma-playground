@@ -36,14 +36,20 @@ module.exports = async function post() {
 
   // First, set up a Prisma project at tmpDirectory
   try {
-
     await exec(`mkdir ${tmpDirectory}`)
+    console.log('MKDIR')
     await exec(`echo "${workspaceSchema}" > ${tmpDirectory}/schema.prisma`)
-    await exec('echo "{}" > package.json', { cwd: tmpDirectory });
-    await exec("npm install @prisma/cli @prisma/client", { cwd: tmpDirectory });
+    console.log('CREATE SCHEMA')
+    await exec(`mkdir node_modules`, { cwd: tmpDirectory })
+    console.log('CREATE NODE_MODULES')
+    await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`)
+    console.log('COPY @PRISMA')
+    await exec('ln -sF ./node_modules/@prisma/cli/build/index.js prisma')
+    console.log('CREATE SYMLINK')
     console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
   }
   catch (e) {
+    console.log(e)
     console.log(await exec('ls -a', { cwd: tmpDirectory }))
     throw e.message;
   }
@@ -53,7 +59,7 @@ module.exports = async function post() {
     console.log('MIGRATE UP')
     await exec(
       [
-        "./node_modules/.bin/prisma migrate save --experimental",
+        "./prisma migrate save --experimental",
         "--create-db",
         '--name "Initial"',
       ].join(" "),
@@ -67,7 +73,7 @@ module.exports = async function post() {
     );
     console.log('MIGRATE SAVE')
     await exec(
-      "node_modules/.bin/prisma migrate up --experimental",
+      "./prisma migrate up --experimental",
       {
         cwd: tmpDirectory,
         env: {
@@ -92,7 +98,7 @@ module.exports = async function post() {
   try {
     // Generate Prisma Client for the workspace
     await exec(
-      "node_modules/.bin/prisma generate",
+      "./prisma generate",
       {
         cwd: tmpDirectory,
         env: {
