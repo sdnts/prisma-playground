@@ -35,11 +35,18 @@ module.exports = async function post() {
   // Prepare the `tmpDirectory` directory, then upload it all to S3
 
   // First, set up a Prisma project at tmpDirectory
-  await exec(`mkdir ${tmpDirectory}`)
-  await exec(`echo "${workspaceSchema}" > ${tmpDirectory}/schema.prisma`)
-  await exec('echo "{}" > package.json', { cwd: tmpDirectory });
-  await exec("npm install @prisma/cli @prisma/client", { cwd: tmpDirectory });
-  console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
+  try {
+
+    await exec(`mkdir ${tmpDirectory}`)
+    await exec(`echo "${workspaceSchema}" > ${tmpDirectory}/schema.prisma`)
+    await exec('echo "{}" > package.json', { cwd: tmpDirectory });
+    await exec("npm install @prisma/cli @prisma/client", { cwd: tmpDirectory });
+    console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
+  }
+  catch (e) {
+    console.log(await exec('ls -a', { cwd: tmpDirectory }))
+    throw e.message;
+  }
 
   // Then, provision a database & run an initial migration to get it to the correct state
   try {
