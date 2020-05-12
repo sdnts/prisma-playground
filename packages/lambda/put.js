@@ -1,5 +1,3 @@
-import { LAMBDA_WRITABLE_LOCATION } from "./constants";
-
 module.exports = async function put(event) {
   const { id, schema, code } = JSON.parse(event.body);
 
