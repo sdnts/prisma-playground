@@ -74,7 +74,14 @@ module.exports = async function post() {
     );
     console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
   } catch (e) {
-    console.log(JSON.stringify(e), JSON.stringify(e.toString()))
+    console.log('Error during migrate')
+    console.log(e)
+    console.log(e.message)
+    console.log(e.stack)
+    console.log(JSON.stringify(e))
+    console.log(JSON.stringify(e.toString()))
+    console.log(JSON.stringify(e.message))
+    console.log(JSON.stringify(e.stack))
     throw e.toString()
   }
 
