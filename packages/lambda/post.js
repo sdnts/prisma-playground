@@ -74,7 +74,7 @@ module.exports = async function post() {
     );
     console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
   } catch (e) {
-    console.log(e.toString())
+    console.log(JSON.stringify(e), JSON.stringify(e.toString()))
     throw e.toString()
   }
 
