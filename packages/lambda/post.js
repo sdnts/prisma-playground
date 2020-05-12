@@ -87,7 +87,6 @@ module.exports = async function post() {
     [
       "-rf",
       ".DS_Store",
-      "node_modules/.prisma/client/index.d.ts",
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
       "node_modules/@prisma/client/generator-build",
