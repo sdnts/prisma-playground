@@ -51,6 +51,7 @@ module.exports = async function post() {
         env: {
           ...process.env,
           DB_URL: workspaceDbUrl,
+          RUST_BACKTRACE: 1
         },
       }
     );
@@ -62,6 +63,7 @@ module.exports = async function post() {
         env: {
           ...process.env,
           DB_URL: workspaceDbUrl,
+          RUST_BACKTRACE: 1
         },
       }
     );
