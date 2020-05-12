@@ -17,14 +17,14 @@ exports.handler = function workspace(event) {
       default:
         return {
           statusCode: 400,
-          body: "Bad Request: Unsupported Method",
+          body: JSON.stringify({ error: "Bad Request" }),
         };
     }
-  } catch (error) {
+  } catch (e) {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        error,
+        error: e.toString(),
       }),
     };
   }
