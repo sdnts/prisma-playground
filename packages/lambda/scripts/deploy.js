@@ -37,7 +37,7 @@ async function main() {
 
   // Generate an npm project in the directory and install relevant packages
   await exec('echo "{}" > package.json', { cwd: output });
-  await exec("npm install @prisma/cli @prisma/client", { cwd: output });
+  await exec("npm install @prisma/cli @prisma/client uuid", { cwd: output });
   console.log("✔️ Installed dependencies to directory");
 
   // Remove unnecessary files from the archive
