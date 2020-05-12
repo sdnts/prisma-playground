@@ -42,7 +42,7 @@ module.exports = async function post() {
 
   // Then, provision a database & run an initial migration to get it to the correct state
   try {
-
+    console.log('MIGRATE UP')
     await exec(
       [
         path.resolve(__dirname, "./node_modules/.bin/prisma"),
@@ -58,6 +58,7 @@ module.exports = async function post() {
         },
       }
     );
+    console.log('MIGRATE SAVE')
     await exec(
       [
         path.resolve(__dirname, "./node_modules/.bin/prisma"),
@@ -104,8 +105,11 @@ module.exports = async function post() {
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
       "node_modules/@prisma/client/generator-build",
+      "node_modules/.prisma/client/runtime/*.d.ts",
+      "node_modules/.prisma/client/runtime/*.map",
+      "node_modules/.prisma/client/runtime/highlight/*.d.ts",
+      "node_modules/.prisma/client/runtime/utils/*.d.ts",
       "node_modules/@prisma/client/scripts",
-      "node_modules/.prisma/client/*.d.ts",
     ].join(" "),
     { shell: true, cwd: tmpDirectory }
   );
@@ -134,6 +138,4 @@ module.exports = async function post() {
     },
     body: JSON.stringify({ workspace }),
   };
-
-  return {};
 };

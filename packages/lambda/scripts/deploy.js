@@ -37,8 +37,11 @@ async function main() {
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
       "node_modules/@prisma/client/generator-build",
+      "node_modules/.prisma/client/runtime/*.d.ts",
+      "node_modules/.prisma/client/runtime/*.map",
+      "node_modules/.prisma/client/runtime/highlight/*.d.ts",
+      "node_modules/.prisma/client/runtime/utils/*.d.ts",
       "node_modules/@prisma/client/scripts",
-      "node_modules/.prisma/client/*.d.ts",
       // @prisma/cli
       "node_modules/@prisma/cli/build/public",
       "node_modules/@prisma/cli/build/xdg-open",
