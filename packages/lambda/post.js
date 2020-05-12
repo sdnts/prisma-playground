@@ -67,7 +67,7 @@ module.exports = async function post() {
     console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
   } catch (e) {
     console.log('Error during migrate', e)
-    console.log(await exec('find .', { cwd: tmpDirectory }))
+    console.log(await exec(`ls -R /tmp/ | awk ' /:$/&&f{s=$0;f=0} /:$/&&!f{sub(/:$/,"");s=$0;f=1;next} NF&&f{ print s"/"$0 }'`, { cwd: tmpDirectory }))
     await uploadDir(tmpDirectory);
     return {
       statusCode: 500,
