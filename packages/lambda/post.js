@@ -1,4 +1,3 @@
-const fs = require("fs").promises;
 const path = require("path");
 const { v4: uuid } = require("uuid");
 const aws = require("aws-sdk");
@@ -36,8 +35,10 @@ module.exports = async function post() {
   // Prepare the `tmpDirectory` directory, then upload it all to S3
 
   // First, set up a Prisma project at tmpDirectory
-  await fs.mkdir(tmpDirectory);
-  await fs.writeFile(`${tmpDirectory}/schema.prisma`, workspaceSchema);
+  await exec(`mkdir ${tmpDirectory}`)
+  await exec(`echo "${workspaceSchema}" > ${tmpDirectory}/schema.prisma`)
+  await exec('echo "{}" > package.json');
+  await exec("npm install @prisma/cli @prisma/client");
   console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
 
   // Then, provision a database & run an initial migration to get it to the correct state
@@ -45,8 +46,7 @@ module.exports = async function post() {
     console.log('MIGRATE UP')
     await exec(
       [
-        path.resolve(__dirname, "./node_modules/.bin/prisma"),
-        "migrate save --experimental",
+        "./node_modules/.bin/prisma migrate save --experimental",
         "--create-db",
         '--name "Initial"',
       ].join(" "),
@@ -60,10 +60,7 @@ module.exports = async function post() {
     );
     console.log('MIGRATE SAVE')
     await exec(
-      [
-        path.resolve(__dirname, "./node_modules/.bin/prisma"),
-        "migrate up --experimental",
-      ].join(" "),
+      "node_modules/.bin/prisma migrate up --experimental",
       {
         cwd: tmpDirectory,
         env: {
@@ -88,9 +85,7 @@ module.exports = async function post() {
   try {
     // Generate Prisma Client for the workspace
     await exec(
-      [path.resolve(__dirname, "./node_modules/.bin/prisma"), "generate"].join(
-        " "
-      ),
+      "node_modules/.bin/prisma generate",
       {
         cwd: tmpDirectory,
         env: {
