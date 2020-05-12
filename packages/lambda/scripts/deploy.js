@@ -48,7 +48,6 @@ async function main() {
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
       "node_modules/@prisma/client/generator-build",
-      "node_modules/@prisma/client/runtime",
       "node_modules/@prisma/client/scripts",
       "node_modules/.prisma/client/*.d.ts",
       // @prisma/cli

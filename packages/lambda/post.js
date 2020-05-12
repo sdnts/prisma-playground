@@ -90,7 +90,6 @@ module.exports = async function post() {
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
       "node_modules/@prisma/client/generator-build",
-      "node_modules/@prisma/client/runtime",
       "node_modules/@prisma/client/scripts",
     ],
     { shell: true, cwd: tmpDirectory }
