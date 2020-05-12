@@ -105,14 +105,21 @@ module.exports = async function post() {
   await exec(
     [
       "rm -rf",
+      // @prisma/client
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
       "node_modules/@prisma/client/generator-build",
+      "node_modules/@prisma/client/runtime/*.d.ts",
+      "node_modules/@prisma/client/runtime/*.map",
+      "node_modules/@prisma/client/runtime/highlight",
+      "node_modules/@prisma/client/runtime/utils",
+      "node_modules/@prisma/client/scripts",
+      // .prisma/client
+      "node_modules/.prisma/client/*.d.ts",
       "node_modules/.prisma/client/runtime/*.d.ts",
       "node_modules/.prisma/client/runtime/*.map",
-      "node_modules/.prisma/client/runtime/highlight/*.d.ts",
-      "node_modules/.prisma/client/runtime/utils/*.d.ts",
-      "node_modules/@prisma/client/scripts",
+      "node_modules/.prisma/client/runtime/highlight",
+      "node_modules/.prisma/client/runtime/utils",
     ].join(" "),
     { shell: true, cwd: tmpDirectory }
   );

@@ -36,12 +36,17 @@ async function main() {
       // @prisma/client
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
-      "node_modules/@prisma/client/generator-build",
+      "node_modules/@prisma/client/runtime/*.d.ts",
+      "node_modules/@prisma/client/runtime/*.map",
+      "node_modules/@prisma/client/runtime/highlight",
+      "node_modules/@prisma/client/runtime/utils",
+      "node_modules/@prisma/client/scripts",
+      // .prisma/client
+      "node_modules/.prisma/client/*.d.ts",
       "node_modules/.prisma/client/runtime/*.d.ts",
       "node_modules/.prisma/client/runtime/*.map",
-      "node_modules/.prisma/client/runtime/highlight/*.d.ts",
-      "node_modules/.prisma/client/runtime/utils/*.d.ts",
-      "node_modules/@prisma/client/scripts",
+      "node_modules/.prisma/client/runtime/highlight",
+      "node_modules/.prisma/client/runtime/utils",
       // @prisma/cli
       "node_modules/@prisma/cli/build/public",
       "node_modules/@prisma/cli/build/xdg-open",
