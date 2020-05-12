@@ -44,7 +44,7 @@ module.exports = async function post() {
     console.log('CREATE NODE_MODULES')
     await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`)
     console.log('COPY @PRISMA')
-    await exec('ln -sF ./node_modules/@prisma/cli/build/index.js prisma')
+    await exec('ln -sF ./node_modules/@prisma/cli/build/index.js prisma', { cwd: tmpDirectory })
     console.log('CREATE SYMLINK')
     console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
   }
