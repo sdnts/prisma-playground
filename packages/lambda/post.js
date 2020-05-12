@@ -20,6 +20,8 @@ module.exports = async function post() {
   const workspaceCode = DEFAULT_CODE;
   const tmpDirectory = `${LAMBDA_WRITABLE_LOCATION}/${workspaceId}`;
 
+  console.log('Working with database at: ', workspaceDbUrl)
+
   // Prepare the `tmpDirectory` directory, then upload it all to S3
 
   // First, set up a Prisma project at tmpDirectory
