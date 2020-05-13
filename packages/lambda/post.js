@@ -44,12 +44,18 @@ module.exports = async function post() {
         cwd: tmpDirectory,
         env: {
           ...process.env,
-          DB_URL: workspaceDbUrl,
-          RUST_BACKTRACE: 1
+          DB_URL: workspaceDbUrl
         },
       }
     );
-    console.log('MIGRATE UP')
+  }
+  catch (e) {
+    // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
+  }
+
+  console.log('MIGRATE SAVE')
+
+  try {
     await exec(
       "./prisma migrate up --experimental",
       {
@@ -57,14 +63,13 @@ module.exports = async function post() {
         cwd: tmpDirectory,
         env: {
           ...process.env,
-          DB_URL: workspaceDbUrl,
-          RUST_BACKTRACE: 1
+          DB_URL: workspaceDbUrl
         },
       }
     );
-    console.log('MIGRATE SAVE')
-    console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
-  } catch (e) {
+    console.log('MIGRATE UP')
+  }
+  catch (e) {
     console.log('Error during migrate', e)
     await uploadDir(tmpDirectory);
     return {
@@ -75,6 +80,8 @@ module.exports = async function post() {
       body: JSON.stringify({ error: e }),
     }
   }
+
+  console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
 
   try {
     // Generate Prisma Client for the workspace
