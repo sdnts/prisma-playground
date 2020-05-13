@@ -53,8 +53,6 @@ module.exports = async function post() {
     // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
 
-  console.log('MIGRATE SAVE')
-
   try {
     await exec(
       "./prisma migrate up --experimental",
@@ -67,18 +65,9 @@ module.exports = async function post() {
         },
       }
     );
-    console.log('MIGRATE UP')
   }
   catch (e) {
-    console.log('Error during migrate', e)
-    await uploadDir(tmpDirectory);
-    return {
-      statusCode: 500,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ error: e }),
-    }
+    // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
 
   console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
@@ -100,6 +89,7 @@ module.exports = async function post() {
     // For some reason, `generate` throws an `npm` error, but generates correctly. Ignore it
     console.error("Error generating Prisma Client: ", e);
   }
+
   console.log(`✅ Generated Prisma Client for workspace ${workspaceId}`);
 
   // Clean up `tmpDirectory` directory by removing unnecessary files
