@@ -1,34 +1,27 @@
 const { v4: uuid } = require("uuid");
 const { PrismaClient } = require("@prisma/client");
 
-const exec = require("./exec");
-const uploadDir = require("./uploadDir");
-
-const {
-  DEFAULT_SCHEMA,
-  DEFAULT_CODE,
-  LAMBDA_WRITABLE_LOCATION,
-} = require("./constants");
-
-const prisma = new PrismaClient();
+const exec = require("./utils/exec");
+const uploadDir = require("./utils/uploadDir");
+const { DEFAULT_SCHEMA, DEFAULT_CODE } = require("./constants");
 
 module.exports = async function post() {
   const workspaceId = uuid();
-  // const workspaceId = 'abcd';
   const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${workspaceId}`;
   const workspaceSchema = DEFAULT_SCHEMA;
   const workspaceCode = DEFAULT_CODE;
-  const tmpDirectory = `${LAMBDA_WRITABLE_LOCATION}/${workspaceId}`;
-
-  // Prepare the `tmpDirectory` directory, then upload it all to S3
+  const tmpDirectory = `/tmp/${workspaceId}`;
 
   // First, set up a Prisma project at tmpDirectory
-  await exec(`mkdir ${tmpDirectory}`)
-  // await exec(`echo "${${tmpDirectory}/schema.prisma}" > ${tmpDirectory}/schema.prisma`)
-  await exec(`cat <<EOF > ${tmpDirectory}/schema.prisma \n${workspaceSchema}\nEOF`)
-  await exec(`mkdir node_modules`, { cwd: tmpDirectory })
-  await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`)
-  await exec(`ln -sf node_modules/@prisma/cli/build/index.js ./prisma`, { cwd: tmpDirectory })
+  await exec(`mkdir ${tmpDirectory}`);
+  await exec(
+    `cat <<EOF > ${tmpDirectory}/schema.prisma \n${workspaceSchema}\nEOF`
+  );
+  await exec(`mkdir node_modules`, { cwd: tmpDirectory });
+  await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`);
+  await exec(`ln -sf node_modules/@prisma/cli/build/index.js ./prisma`, {
+    cwd: tmpDirectory,
+  }); // Create a symlink for easy invocation
   console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
 
   // Then, provision a database & run an initial migration to get it to the correct state
@@ -44,29 +37,24 @@ module.exports = async function post() {
         cwd: tmpDirectory,
         env: {
           ...process.env,
-          DB_URL: workspaceDbUrl
+          DB_URL: workspaceDbUrl,
         },
       }
     );
-  }
-  catch (e) {
+  } catch (e) {
     // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
 
   try {
-    await exec(
-      "./prisma migrate up --experimental",
-      {
-        debug: true,
-        cwd: tmpDirectory,
-        env: {
-          ...process.env,
-          DB_URL: workspaceDbUrl
-        },
-      }
-    );
-  }
-  catch (e) {
+    await exec("./prisma migrate up --experimental", {
+      debug: true,
+      cwd: tmpDirectory,
+      env: {
+        ...process.env,
+        DB_URL: workspaceDbUrl,
+      },
+    });
+  } catch (e) {
     // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
 
@@ -74,17 +62,14 @@ module.exports = async function post() {
 
   try {
     // Generate Prisma Client for the workspace
-    await exec(
-      "./prisma generate",
-      {
-        cwd: tmpDirectory,
-        env: {
-          ...process.env,
-          DB_URL: workspaceDbUrl,
-        },
-      }
-    );
-    console.log('PRISMA GENERATE')
+    await exec("./prisma generate", {
+      cwd: tmpDirectory,
+      env: {
+        ...process.env,
+        DB_URL: workspaceDbUrl,
+      },
+    });
+    console.log("PRISMA GENERATE");
   } catch (e) {
     // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
@@ -95,6 +80,8 @@ module.exports = async function post() {
   await exec(
     [
       "rm -rf",
+      // prisma symlink
+      "prisma",
       // @prisma/client
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
@@ -113,11 +100,13 @@ module.exports = async function post() {
     ].join(" "),
     { shell: true, cwd: tmpDirectory }
   );
-  console.log(`✅ Removed unnecessary files from ${workspaceId}`);
+  console.log(`✅ Removed unnecessary files from ${tmpDirectory}`);
 
   // Upload `tmpDirectory` directory to S3 for storage
   await uploadDir(tmpDirectory);
+  console.log(`✅ Uploaded relevant files to S3 from ${workspaceId}`);
 
+  const prisma = new PrismaClient();
   // Then, create the workspace
   const workspace = await prisma.workspace.create({
     data: {
@@ -126,6 +115,8 @@ module.exports = async function post() {
       code: workspaceCode,
     },
   });
+  await prisma.disconnect();
+  console.log(`✅ Created workspace ${workspaceId}`);
 
   // And send it back
   return {

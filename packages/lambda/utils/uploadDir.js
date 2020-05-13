@@ -1,6 +1,6 @@
 const fs = require("fs").promises;
 const path = require("path");
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 
 async function walk(dir) {
   const files = [];
@@ -20,15 +20,14 @@ async function walk(dir) {
 }
 
 module.exports = async function uploadDir(dir) {
-  const s3 = new AWS.S3()
-  const files = await walk(dir)
-
-  console.log('[uploadDir] Uploading to S3: ', files)
+  const s3 = new AWS.S3();
+  const files = await walk(dir);
+  process.env.DEBUG && console.log("[uploadDir] Uploading to S3: ", files);
 
   for (file of files) {
     await s3
       .putObject({
-        Bucket: 'prisma-playground',
+        Bucket: "prisma-playground",
         Key: file.replace("/tmp/", "workspace/"),
         Body: await fs.readFile(file),
       })

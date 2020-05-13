@@ -1,6 +1,6 @@
 const path = require("path");
-const fs = require("fs").promises;
-const exec = require("../exec");
+
+const exec = require("../utils/exec");
 
 async function main() {
   // We're going through all these hoops for two reasons:

@@ -35,5 +35,3 @@ main()
   .catch(e => console.log(e))
   .finally(() => prisma.disconnect())
 `.trim();
-
-exports.LAMBDA_WRITABLE_LOCATION = "/tmp";
