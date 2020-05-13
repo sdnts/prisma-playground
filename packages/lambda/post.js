@@ -86,8 +86,7 @@ module.exports = async function post() {
     );
     console.log('PRISMA GENERATE')
   } catch (e) {
-    // For some reason, `generate` throws an `npm` error, but generates correctly. Ignore it
-    console.error("Error generating Prisma Client: ", e);
+    // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
 
   console.log(`✅ Generated Prisma Client for workspace ${workspaceId}`);
