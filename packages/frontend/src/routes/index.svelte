@@ -1,8 +1,10 @@
 <script>
   import { goto } from "@sapper/app";
 
+  import { API_URL } from "../constants/url";
+
   export async function create() {
-    const res = await fetch("/api/workspace", {
+    const res = await fetch(`${API_URL}/workspace`, {
       method: "POST"
     });
     const workspace = await res.json();

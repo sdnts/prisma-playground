@@ -1,10 +1,16 @@
 <script context="module">
+  import { API_URL } from "../../constants/url";
+
   export async function preload(page) {
     const { id } = page.params;
 
     try {
-      const res = await this.fetch(`api/workspace?id=${id}`);
-      const workspace = await res.json();
+      const res = await this.fetch(`${API_URL}/workspace?id=${id}`);
+      const { error, workspace } = await res.json();
+
+      if (error) {
+        return this.error(500, "Internal Server Error");
+      }
 
       if (!workspace) {
         return this.error(404, "Not found");
