@@ -9,7 +9,7 @@ import { PrismaClient } from "@prisma/client";
 export default async function get(
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> {
-  process.env.DEBUG && console.log("[get] Received request: ", { event });
+  process.env.DEBUG && console.log("✅[get] Received request: ", { event });
 
   const { id } = event.pathParameters || {};
 
@@ -26,6 +26,7 @@ export default async function get(
   const prisma = new PrismaClient();
   const workspace = await prisma.workspace.findOne({ where: { id } });
   await prisma.disconnect();
+  process.env.DEBUG && console.log(`✅[get] Found workspace with id ${id}`);
 
   if (!workspace) {
     return {

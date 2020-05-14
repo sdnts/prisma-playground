@@ -14,12 +14,16 @@ exports.handler = async function workspace(
     switch (event.httpMethod) {
       case "GET":
         response = await get(event);
+        break;
       case "POST":
-        response = await post();
+        response = await post(event);
+        break;
       case "PUT":
         response = await put(event);
+        break;
       case "DELETE":
         response = await del(event);
+        break;
       default:
         response = {
           statusCode: 400,
@@ -38,7 +42,10 @@ exports.handler = async function workspace(
   } catch (e) {
     return Promise.resolve({
       statusCode: 500,
-      headers: {},
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      },
       body: JSON.stringify({
         error: e.toString(),
         message: "Please contact me@madebysid.com",

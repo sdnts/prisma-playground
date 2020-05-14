@@ -1,4 +1,4 @@
-import { APIGatewayProxyResult } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { v4 as uuid } from "uuid";
 import { PrismaClient } from "@prisma/client";
 
@@ -11,7 +11,9 @@ import { DEFAULT_SCHEMA, DEFAULT_CODE } from "./constants";
  *
  * @param event API Gateway Proxy Event
  */
-export default async function post(): Promise<APIGatewayProxyResult> {
+export default async function post(
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> {
   process.env.DEBUG && console.log("[post] Received request: ", { event });
 
   const workspaceId = uuid();
