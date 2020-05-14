@@ -13,12 +13,17 @@ export default function runJS(code: string, projectDir: string): string {
 
     console: {
       log: function (...args: any[]) {
-        env._stdout += args.map((a) => `"${String(a)}"`);
-        return undefined;
-      },
-      error: function (...args: any[]) {
-        env._stdout += args.map((a) => `"${String(a)}"`);
-        return undefined;
+        env._stdout += args
+          .map((a) => {
+            if (Array.isArray(a) || typeof a === "object") {
+              return JSON.stringify(a);
+            }
+            return `"${String(a)}"`;
+          })
+          .join(", ");
+        env._stdout += "\n";
+
+        return;
       },
     },
   };
