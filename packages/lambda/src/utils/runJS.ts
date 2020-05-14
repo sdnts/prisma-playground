@@ -25,8 +25,13 @@ export default function runJS(
   new Function(
     "env",
     `
-      const {require, console} = env;
-      ${code}
+      try {
+        const { require, console } = env;
+        ${code}
+      }
+      catch (e) {
+        env._stderr += e.toString()
+      }
     `
   )(env);
 
