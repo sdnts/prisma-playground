@@ -5,7 +5,7 @@
     const { id } = page.params;
 
     try {
-      const res = await this.fetch(`${API_URL}/workspace?id=${id}`);
+      const res = await this.fetch(`${API_URL}/workspace/${id}`);
       const { error, workspace } = await res.json();
 
       if (res.status === 404) {
@@ -25,11 +25,9 @@
 </script>
 
 <script>
-  import { setContext } from "svelte";
-
   import { active } from "../../stores/tabs";
-  import { code } from "../../stores/code";
-  import { schema } from "../../stores/schema";
+  import { code, running } from "../../stores/code";
+  import { schema, saving } from "../../stores/schema";
 
   import Tab from "../../components/Tab.svelte";
   import Code from "../../components/Code.svelte";
@@ -37,14 +35,35 @@
   import Output from "../../components/Output.svelte";
 
   export let workspace;
-
-  setContext("workspaceId", workspace.id);
+  console.log(workspace);
 
   code.set(workspace.code);
   schema.set(workspace.schema);
 
   let switchToCode = () => active.set("code");
   let switchToSchema = () => active.set("schema");
+
+  export let runCode = async () => {
+    try {
+      running.set(true);
+      console.log("running");
+      const response = await fetch(`${API_URL}/workspace/${workspace.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: workspace.id })
+      });
+      console.log("what", response);
+
+      // output.set(output);
+      // outputVisible.set(true);
+    } catch (e) {
+      console.log("err", e);
+    }
+  };
+
+  export let saveSchema = async () => {};
 </script>
 
 <style>
@@ -67,9 +86,9 @@
   </nav>
 
   {#if $active === 'code'}
-    <Code />
+    <Code on:run={runCode} />
   {:else if $active === 'schema'}
-    <Schema />
+    <Schema on:save={saveSchema} />
   {/if}
 
   <Output />

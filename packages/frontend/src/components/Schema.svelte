@@ -1,8 +1,10 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
 
   import { schema, saving } from "../stores/schema";
   import Button from "./Button.svelte";
+
+  const dispatch = createEventDispatcher();
 
   onMount(() => {
     const root = document.querySelector(".schema");
@@ -18,10 +20,7 @@
     schema.subscribe(c => editor.setValue(c));
   });
 
-  let save = () => {
-    console.log("Saving");
-    saving.set(true);
-  };
+  let save = () => dispatch("save");
 </script>
 
 <style>
@@ -31,4 +30,6 @@
 </style>
 
 <section class="schema" />
-<Button title="Save Schema" on:click={save}>✓</Button>
+<Button title="Save Schema" on:click={save} disabled={$saving}>
+  {#if $saving}·{:else}✓{/if}
+</Button>

@@ -28,6 +28,10 @@
   button:hover {
     box-shadow: var(--shadow);
   }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
 </style>
 
 <button on:click {title}>

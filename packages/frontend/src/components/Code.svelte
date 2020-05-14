@@ -1,5 +1,5 @@
 <script>
-  import { onMount, getContext } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
 
   import { code, running } from "../stores/code";
   import { output, visible as outputVisible } from "../stores/output";
@@ -7,7 +7,7 @@
 
   import Button from "./Button.svelte";
 
-  const workspaceId = getContext("workspaceId");
+  const dispatch = createEventDispatcher();
 
   onMount(() => {
     const root = document.querySelector(".code");
@@ -23,20 +23,7 @@
     code.subscribe(c => editor.setValue(c));
   });
 
-  let run = async () => {
-    running.set(true);
-    const { error, workspace, output } = await fetch(`${API_URL}/workspace`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ id: workspaceId })
-    });
-    console.log(error, workspace, output);
-
-    output.set(output);
-    outputVisible.set(true);
-  };
+  let run = () => dispatch("run");
 </script>
 
 <style>
@@ -46,4 +33,6 @@
 </style>
 
 <section class="code" />
-<Button title="Run Code" on:click={run}>ᐈ</Button>
+<Button title="Run Code" on:click={run} disabled={$running}>
+  {#if $running}·{:else}ᐈ{/if}
+</Button>

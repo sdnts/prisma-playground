@@ -38,6 +38,7 @@ module.exports = async function put(event) {
   const { schema, code } = JSON.parse(event.body);
   if (!schema && !code) {
     return {
+      statusCode: 200,
       error: null,
       workspace,
       output: null,
