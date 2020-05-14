@@ -52,7 +52,7 @@ module.exports = async function put(event) {
   }
 
   const tmpDirectory = `/tmp/${id}`;
-  const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${workspaceId}`;
+  const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${workspace.id}`;
 
   // Copy over this workspace's file system from S3
   await downloadDir(`workspace/${id}`);
