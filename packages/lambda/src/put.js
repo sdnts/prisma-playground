@@ -4,6 +4,8 @@ const downloadDir = require("./utils/downloadDir");
 const uploadDir = require("./utils/uploadDir");
 
 module.exports = async function put(event) {
+  process.env.DEBUG && console.log("[put] Received request: ", { event });
+
   const { id } = event.pathParameters || {};
   if (!id) {
     return {

@@ -6,6 +6,8 @@ const uploadDir = require("./utils/uploadDir");
 const { DEFAULT_SCHEMA, DEFAULT_CODE } = require("./constants");
 
 module.exports = async function post() {
+  process.env.DEBUG && console.log("[post] Received request: ", { event });
+
   const workspaceId = uuid();
   const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${workspaceId}`;
   const workspaceSchema = DEFAULT_SCHEMA;

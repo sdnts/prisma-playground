@@ -3,6 +3,8 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 module.exports = async function get(event) {
+  process.env.DEBUG && console.log("[get] Received request: ", { event });
+
   const { id } = event.pathParameters || {};
 
   if (!id) {

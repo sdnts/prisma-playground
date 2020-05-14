@@ -1,6 +1,8 @@
 const { PrismaClient } = require("@prisma/client");
 
 module.exports = async function del(event) {
+  process.env.DEBUG && console.log("[delete] Received request: ", { event });
+
   const { id } = event.pathParameters || {};
   if (!id) {
     return {
