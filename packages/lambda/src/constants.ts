@@ -22,7 +22,7 @@ model Post {
 `.trim();
 
 export const DEFAULT_CODE = `
-import { PrismaClient } from '@prisma/client'
+const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient();
 

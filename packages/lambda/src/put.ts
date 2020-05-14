@@ -5,6 +5,7 @@ import exec from "./utils/exec";
 
 import downloadDir from "./utils/downloadDir";
 import uploadDir from "./utils/uploadDir";
+import runJS from "./utils/runJS";
 
 /**
  * Handles PUT requests to this Lambda
@@ -71,9 +72,13 @@ export default async function put(
   process.env.DEBUG &&
     console.log(`✅[put] Downloaded relevant files from S3 to ${tmpDirectory}`);
 
-  let output = "";
+  const output = {
+    stdout: "",
+    stderr: "",
+  };
 
-  if (workspace.schema !== schema) {
+  // If the schema has changed, migrate up!
+  if (schema && workspace.schema !== schema) {
     await exec(`ln -sf node_modules/@prisma/cli/build/index.js ./prisma`, {
       cwd: tmpDirectory,
     }); // Create a symlink for easy invocation
@@ -157,13 +162,13 @@ export default async function put(
     await uploadDir(tmpDirectory);
     console.log(`✅[put] Uploaded relevant files to S3 from ${tmpDirectory}`);
 
-    output = "Migration Complete";
+    output.stdout = "Migration Complete";
   }
 
-  if (workspace.code !== code) {
-    // Run code
-    output = "Running Code";
-  }
+  // Run code
+  const o = runJS(code);
+  output.stdout = o.stdout;
+  output.stderr = o.stderr;
 
   // And update the workspace
   const updatedWorkspace = await prisma.workspace.update({
