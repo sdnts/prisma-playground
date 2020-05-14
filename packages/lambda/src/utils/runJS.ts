@@ -2,18 +2,16 @@ export default function runJS(code: string, projectDir: string): string {
   const env = {
     _stdout: "",
 
-    require: function (module: string): any {
-      if (module !== "@prisma/client") {
+    require: function (moduleId: string): any {
+      if (moduleId !== "@prisma/client") {
         env._stdout += `"LMAO Nice try, you can only import "@prisma/client".`;
         return;
       }
 
+      const module = require(`${projectDir}/node_modules/@prisma/client/index.js`);
       process.env.DEBUG &&
-        console.log(
-          "Imported Prisma Client, returning: ",
-          require(`${projectDir}/node_modules/@prisma/client`)
-        );
-      return require(`${projectDir}/node_modules/@prisma/client`);
+        console.log("Imported Prisma Client, returning: ", module);
+      return module;
     },
 
     console: {
