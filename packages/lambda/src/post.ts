@@ -1,11 +1,17 @@
-const { v4: uuid } = require("uuid");
-const { PrismaClient } = require("@prisma/client");
+import { APIGatewayProxyResult } from "aws-lambda";
+import { v4 as uuid } from "uuid";
+import { PrismaClient } from "@prisma/client";
 
-const exec = require("./utils/exec");
-const uploadDir = require("./utils/uploadDir");
-const { DEFAULT_SCHEMA, DEFAULT_CODE } = require("./constants");
+import exec from "./utils/exec";
+import uploadDir from "./utils/uploadDir";
+import { DEFAULT_SCHEMA, DEFAULT_CODE } from "./constants";
 
-module.exports = async function post() {
+/**
+ * Handles POST requests to this Lambda
+ *
+ * @param event API Gateway Proxy Event
+ */
+export default async function post(): Promise<APIGatewayProxyResult> {
   process.env.DEBUG && console.log("[post] Received request: ", { event });
 
   const workspaceId = uuid();
@@ -35,7 +41,6 @@ module.exports = async function post() {
         '--name "Initial"',
       ].join(" "),
       {
-        debug: true,
         cwd: tmpDirectory,
         env: {
           ...process.env,
@@ -49,7 +54,6 @@ module.exports = async function post() {
 
   try {
     await exec("./prisma migrate up --experimental", {
-      debug: true,
       cwd: tmpDirectory,
       env: {
         ...process.env,
@@ -100,7 +104,7 @@ module.exports = async function post() {
       "node_modules/.prisma/client/runtime/highlight",
       "node_modules/.prisma/client/runtime/utils",
     ].join(" "),
-    { shell: true, cwd: tmpDirectory }
+    { shell: "/bin/sh", cwd: tmpDirectory }
   );
   console.log(`✅ Removed unnecessary files from ${tmpDirectory}`);
 
@@ -128,4 +132,4 @@ module.exports = async function post() {
     },
     body: JSON.stringify({ error: null, workspace }),
   };
-};
+}

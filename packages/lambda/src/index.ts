@@ -1,32 +1,36 @@
-const get = require("./get");
-const post = require("./post");
-const put = require("./put");
-const del = require("./delete");
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
-exports.handler = function workspace(event) {
+import get from "./get";
+import post from "./post";
+import put from "./put";
+import del from "./delete";
+
+exports.handler = function workspace(
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> {
   try {
     switch (event.httpMethod) {
       case "GET":
         return get(event);
       case "POST":
-        return post(event);
+        return post();
       case "PUT":
         return put(event);
       case "DELETE":
         return del(event);
       default:
-        return {
+        return Promise.resolve({
           statusCode: 400,
           body: JSON.stringify({ error: "Bad Request" }),
-        };
+        });
     }
   } catch (e) {
-    return {
+    return Promise.resolve({
       statusCode: 500,
       body: JSON.stringify({
         error: e.toString(),
         message: "Please contact me@madebysid.com",
       }),
-    };
+    });
   }
 };

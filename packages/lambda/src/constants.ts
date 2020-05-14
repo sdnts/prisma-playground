@@ -1,4 +1,4 @@
-exports.DEFAULT_SCHEMA = `
+export const DEFAULT_SCHEMA = `
 datasource db {
   provider = "postgres"
   url      = env("DB_URL")
@@ -21,7 +21,7 @@ model Post {
 }
 `.trim();
 
-exports.DEFAULT_CODE = `
+export const DEFAULT_CODE = `
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient();

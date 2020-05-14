@@ -1,6 +1,14 @@
-const { PrismaClient } = require("@prisma/client");
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { PrismaClient } from "@prisma/client";
 
-module.exports = async function del(event) {
+/**
+ * Handles DELETE requests to this Lambda
+ *
+ * @param event API Gateway Proxy Event
+ */
+export default async function del(
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> {
   process.env.DEBUG && console.log("[delete] Received request: ", { event });
 
   const { id } = event.pathParameters || {};
@@ -27,4 +35,4 @@ module.exports = async function del(event) {
     statusCode: 200,
     body: JSON.stringify({ workspace }),
   };
-};
+}

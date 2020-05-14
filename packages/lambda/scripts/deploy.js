@@ -1,6 +1,13 @@
 const path = require("path");
+const child_process = require("child_process");
 
-const exec = require("../src/utils/exec");
+function exec(command, options = {}) {
+  return new Promise((resolve, reject) =>
+    child_process.exec(command, options, (error, stdout, stderr) => {
+      return error ? reject(error) : resolve(stdout);
+    })
+  );
+}
 
 async function main() {
   // We're going through all these hoops for two reasons:
@@ -20,7 +27,7 @@ async function main() {
   console.log("✅ Created a temporary directory");
 
   // Copy all source files used in the lambda function to this directory
-  await exec("cp -R src/* archive", { cwd: input, shell: true });
+  await exec("./node_modules/.bin/tsc", { cwd: input, shell: true });
   await exec("cp -R prisma/schema.prisma archive", { cwd: input, shell: true });
   console.log("✅ Copied necessary files to directory");
 

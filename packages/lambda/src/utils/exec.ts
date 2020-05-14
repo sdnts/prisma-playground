@@ -1,6 +1,12 @@
-const child_process = require("child_process");
+import child_process from "child_process";
 
-module.exports = async function exec(command, options = {}) {
+/**
+ * Executes a shell command as a promise
+ */
+export default async function exec(
+  command: string,
+  options: child_process.ExecOptions = {}
+): Promise<string> {
   return new Promise((resolve, reject) =>
     child_process.exec(command, options, (error, stdout, stderr) => {
       if (error) {
@@ -14,4 +20,4 @@ module.exports = async function exec(command, options = {}) {
       return resolve(stdout);
     })
   );
-};
+}

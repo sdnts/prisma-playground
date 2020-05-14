@@ -1,9 +1,19 @@
-const { PrismaClient } = require("@prisma/client");
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
-const downloadDir = require("./utils/downloadDir");
-const uploadDir = require("./utils/uploadDir");
+import { PrismaClient } from "@prisma/client";
+import exec from "./utils/exec";
 
-module.exports = async function put(event) {
+import downloadDir from "./utils/downloadDir";
+import uploadDir from "./utils/uploadDir";
+
+/**
+ * Handles PUT requests to this Lambda
+ *
+ * @param event API Gateway Proxy Event
+ */
+export default async function put(
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> {
   process.env.DEBUG && console.log("[put] Received request: ", { event });
 
   const { id } = event.pathParameters || {};
@@ -40,14 +50,16 @@ module.exports = async function put(event) {
     };
   }
 
-  const { schema, code } = JSON.parse(event.body);
+  const { schema, code } = JSON.parse(event.body || "{}");
   if (!schema && !code) {
     process.env.DEBUG && console.log(`✅[put] No changes requested`);
     return {
       statusCode: 200,
-      error: null,
-      workspace,
-      output: null,
+      body: JSON.stringify({
+        error: null,
+        workspace,
+        output: null,
+      }),
     };
   }
 
@@ -75,7 +87,6 @@ module.exports = async function put(event) {
           '--name ""',
         ].join(" "),
         {
-          debug: true,
           cwd: tmpDirectory,
           env: {
             ...process.env,
@@ -90,7 +101,6 @@ module.exports = async function put(event) {
 
     try {
       await exec("./prisma migrate up --experimental", {
-        debug: true,
         cwd: tmpDirectory,
         env: {
           ...process.env,
@@ -139,7 +149,7 @@ module.exports = async function put(event) {
         "node_modules/.prisma/client/runtime/highlight",
         "node_modules/.prisma/client/runtime/utils",
       ].join(" "),
-      { shell: true, cwd: tmpDirectory }
+      { shell: "/bin/sh", cwd: tmpDirectory }
     );
     console.log(`✅[put] Removed unnecessary files from ${tmpDirectory}`);
 
@@ -173,4 +183,4 @@ module.exports = async function put(event) {
       output,
     }),
   };
-};
+}
