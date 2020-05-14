@@ -1,3 +1,4 @@
+const options = require("./options");
 const get = require("./get");
 const post = require("./post");
 const put = require("./put");
@@ -6,6 +7,8 @@ const del = require("./delete");
 exports.handler = function workspace(event) {
   try {
     switch (event.httpMethod) {
+      case "OPTIONS":
+        return options(event);
       case "GET":
         return get(event);
       case "POST":
