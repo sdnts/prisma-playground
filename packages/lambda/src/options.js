@@ -4,7 +4,7 @@ module.exports = async function options() {
   return {
     statusCode: 200,
     headers: {
-      "Access-Control-Allow-Origin": "http://localhost:3000",
+      "Access-Control-Allow-Origin": "*",
     },
     body: "",
   };
