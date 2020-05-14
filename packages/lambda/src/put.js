@@ -4,7 +4,7 @@ const downloadDir = require("./utils/downloadDir");
 const uploadDir = require("./utils/uploadDir");
 
 module.exports = async function put(event) {
-  const { id, schema, code } = JSON.parse(event.body);
+  const { id } = event.pathParameters || {};
   if (!id) {
     return {
       statusCode: 400,
@@ -20,10 +20,6 @@ module.exports = async function put(event) {
   }
 
   const prisma = new PrismaClient();
-  const tmpDirectory = `/tmp/${id}`;
-  const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${workspaceId}`;
-  let output = "";
-
   const workspace = await prisma.workspace.findOne({ where: { id } });
   if (!workspace) {
     return {
@@ -39,9 +35,23 @@ module.exports = async function put(event) {
     };
   }
 
+  const { schema, code } = JSON.parse(event.body);
+  if (!schema && !code) {
+    return {
+      error: null,
+      workspace,
+      output: null,
+    };
+  }
+
+  const tmpDirectory = `/tmp/${id}`;
+  const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${workspaceId}`;
+
   // Copy over this workspace's file system from S3
   await downloadDir(`workspace/${id}`);
   console.log(`✅ Downloaded relevant files from S3 to ${tmpDirectory}`);
+
+  let output = "";
 
   if (workspace.schema !== schema) {
     await exec(`ln -sf node_modules/@prisma/cli/build/index.js ./prisma`, {
