@@ -36,7 +36,7 @@ export default function runJS(code: string, projectDir: string): string {
         ${code}
       }
       catch (e) {
-        env._stderr += e.toString()
+        env._stdout += e.toString()
       }
     `
   )(env);
