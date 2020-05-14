@@ -6,6 +6,6 @@ module.exports = async function options() {
     headers: {
       "Access-Control-Allow-Origin": "http://localhost:3000",
     },
-    body: JSON.stringify(event),
+    body: "",
   };
 };

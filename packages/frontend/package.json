@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "dev": "sapper dev",
+    "start": "sapper dev",
     "build": "sapper export",
     "deploy": "yarn build && wrangler publish"
   },

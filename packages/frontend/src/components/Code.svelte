@@ -1,10 +1,13 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, getContext } from "svelte";
 
   import { code, running } from "../stores/code";
   import { output, visible as outputVisible } from "../stores/output";
+  import { API_URL } from "../constants";
 
   import Button from "./Button.svelte";
+
+  const workspaceId = getContext("workspaceId");
 
   onMount(() => {
     const root = document.querySelector(".code");
@@ -20,10 +23,18 @@
     code.subscribe(c => editor.setValue(c));
   });
 
-  let run = () => {
-    console.log("Running");
+  let run = async () => {
     running.set(true);
-    output.set("[]");
+    const { error, workspace, output } = await fetch(`${API_URL}/workspace`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ id: workspaceId })
+    });
+    console.log(error, workspace, output);
+
+    output.set(output);
     outputVisible.set(true);
   };
 </script>
