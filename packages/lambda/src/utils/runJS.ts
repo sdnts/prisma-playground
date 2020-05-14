@@ -1,9 +1,6 @@
-export default function runJS(
-  code: string
-): { stdout: string; stderr: string } {
+export default function runJS(code: string): string {
   const env = {
     _stdout: "",
-    _stderr: "",
 
     require: function () {
       env._stdout += "LMAO Nice try";
@@ -16,7 +13,7 @@ export default function runJS(
         return undefined;
       },
       error: function (...args: any[]) {
-        env._stderr += args.map((a) => String(a));
+        env._stdout += args.map((a) => String(a));
         return undefined;
       },
     },
@@ -35,8 +32,5 @@ export default function runJS(
     `
   )(env);
 
-  return {
-    stdout: env._stdout,
-    stderr: env._stderr,
-  };
+  return env._stdout;
 }

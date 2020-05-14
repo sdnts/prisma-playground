@@ -65,17 +65,14 @@ export default async function put(
   }
 
   const tmpDirectory = `/tmp/${id}`;
-  const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${workspace.id}`;
+  const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${id}`;
 
   // Copy over this workspace's file system from S3
   await downloadDir(`workspace/${id}`);
   process.env.DEBUG &&
     console.log(`✅[put] Downloaded relevant files from S3 to ${tmpDirectory}`);
 
-  const output = {
-    stdout: "",
-    stderr: "",
-  };
+  let output = "";
 
   // If the schema has changed, migrate up!
   if (schema && workspace.schema !== schema) {
@@ -115,7 +112,7 @@ export default async function put(
     } catch (e) {
       // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
-    console.log(`✅[put] Migrate up complete`);
+    process.env.DEBUG && console.log(`✅[put] Migrate up complete`);
 
     // Generate
     try {
@@ -130,7 +127,7 @@ export default async function put(
     } catch (e) {
       // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
-    console.log(`✅[put] Client generation complete`);
+    process.env.DEBUG && console.log(`✅[put] Client generation complete`);
 
     // Upload all changes to S3 again
     await exec(
@@ -156,19 +153,20 @@ export default async function put(
       ].join(" "),
       { shell: "/bin/sh", cwd: tmpDirectory }
     );
-    console.log(`✅[put] Removed unnecessary files from ${tmpDirectory}`);
+    process.env.DEBUG &&
+      console.log(`✅[put] Removed unnecessary files from ${tmpDirectory}`);
 
     // Upload `tmpDirectory` directory to S3 for storage
     await uploadDir(tmpDirectory);
-    console.log(`✅[put] Uploaded relevant files to S3 from ${tmpDirectory}`);
+    process.env.DEBUG &&
+      console.log(`✅[put] Uploaded relevant files to S3 from ${tmpDirectory}`);
 
-    output.stdout = "Migration Complete";
+    output = "Migration Complete";
   }
 
   // Run code
-  const o = runJS(code);
-  output.stdout = o.stdout;
-  output.stderr = o.stderr;
+  output = runJS(code);
+  process.env.DEBUG && console.log(`✅[put] Code run\nstdout: ${output}`);
 
   // And update the workspace
   const updatedWorkspace = await prisma.workspace.update({
@@ -179,6 +177,7 @@ export default async function put(
     },
   });
   await prisma.disconnect();
+  process.env.DEBUG && console.log(`✅[put] Workspace ${id} updated`);
 
   return {
     statusCode: 200,

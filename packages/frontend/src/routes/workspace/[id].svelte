@@ -35,7 +35,6 @@
   import Output from "../../components/Output.svelte";
 
   export let workspace;
-  console.log(workspace);
 
   code.set(workspace.code);
   schema.set(workspace.schema);
@@ -44,9 +43,11 @@
   let switchToSchema = () => active.set("schema");
 
   export let runCode = async () => {
+    let output = "";
+
     try {
       running.set(true);
-      console.log("running", $code);
+
       const response = await fetch(`${API_URL}/workspace/${workspace.id}`, {
         method: "PUT",
         headers: {
@@ -56,10 +57,14 @@
       });
       console.log("what", response);
 
-      // output.set(output);
-      // outputVisible.set(true);
+      output = response.output;
     } catch (e) {
-      console.log("err", e);
+      console.log("Error in PUT request: ", e);
+      output = e.toString();
+    } finally {
+      running.set(false);
+      output.set(output);
+      outputVisible.set(true);
     }
   };
 
