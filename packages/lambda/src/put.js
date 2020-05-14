@@ -8,6 +8,7 @@ module.exports = async function put(event) {
 
   const { id } = event.pathParameters || {};
   if (!id) {
+    process.env.DEBUG && console.log(`❌[put] Invalid id: ${id}, bad request`);
     return {
       statusCode: 400,
       headers: {
@@ -24,6 +25,8 @@ module.exports = async function put(event) {
   const prisma = new PrismaClient();
   const workspace = await prisma.workspace.findOne({ where: { id } });
   if (!workspace) {
+    process.env.DEBUG &&
+      console.log(`❌[put] Unable to find workspace with id: ${id}`);
     return {
       statusCode: 404,
       headers: {
@@ -39,6 +42,7 @@ module.exports = async function put(event) {
 
   const { schema, code } = JSON.parse(event.body);
   if (!schema && !code) {
+    process.env.DEBUG && console.log(`✅[put] No changes requested`);
     return {
       statusCode: 200,
       error: null,
@@ -52,7 +56,8 @@ module.exports = async function put(event) {
 
   // Copy over this workspace's file system from S3
   await downloadDir(`workspace/${id}`);
-  console.log(`✅ Downloaded relevant files from S3 to ${tmpDirectory}`);
+  process.env.DEBUG &&
+    console.log(`✅[put] Downloaded relevant files from S3 to ${tmpDirectory}`);
 
   let output = "";
 
@@ -81,6 +86,7 @@ module.exports = async function put(event) {
     } catch (e) {
       // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
+    process.env.DEBUG && console.log(`✅[put] Migrate save complete`);
 
     try {
       await exec("./prisma migrate up --experimental", {
@@ -94,7 +100,7 @@ module.exports = async function put(event) {
     } catch (e) {
       // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
-    console.log(`✅ Migrated workspace ${id} to new schema`);
+    console.log(`✅[put] Migrate up complete`);
 
     // Generate
     try {
@@ -106,11 +112,10 @@ module.exports = async function put(event) {
           DB_URL: workspaceDbUrl,
         },
       });
-      console.log("PRISMA GENERATE");
     } catch (e) {
       // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
-    console.log(`✅ Generated Prisma Client for workspace ${id}`);
+    console.log(`✅[put] Client generation complete`);
 
     // Upload all changes to S3 again
     await exec(
@@ -136,11 +141,11 @@ module.exports = async function put(event) {
       ].join(" "),
       { shell: true, cwd: tmpDirectory }
     );
-    console.log(`✅ Removed unnecessary files from ${tmpDirectory}`);
+    console.log(`✅[put] Removed unnecessary files from ${tmpDirectory}`);
 
     // Upload `tmpDirectory` directory to S3 for storage
     await uploadDir(tmpDirectory);
-    console.log(`✅ Uploaded relevant files to S3 from ${workspaceId}`);
+    console.log(`✅[put] Uploaded relevant files to S3 from ${tmpDirectory}`);
 
     output = "Migration Complete";
   }
@@ -150,21 +155,21 @@ module.exports = async function put(event) {
     output = "Running Code";
   }
 
-  // And run saved code against it
-
+  // And update the workspace
+  const updatedWorkspace = await prisma.workspace.update({
+    where: { id },
+    data: {
+      code,
+      schema,
+    },
+  });
   await prisma.disconnect();
 
   return {
     statusCode: 200,
     body: JSON.stringify({
       error: null,
-      workspace: await prisma.workspace.update({
-        where: { id },
-        data: {
-          code,
-          schema,
-        },
-      }),
+      workspace: updatedWorkspace,
       output,
     }),
   };

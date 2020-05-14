@@ -52,7 +52,7 @@
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ id: workspace.id })
+        body: JSON.stringify({ code: $code })
       });
       console.log("what", response);
 
