@@ -165,8 +165,8 @@ export default async function put(
   }
 
   // Run code
-  output = runJS(code);
-  process.env.DEBUG && console.log(`✅[put] Code run\nstdout: ${output}`);
+  output = runJS(code, tmpDirectory);
+  process.env.DEBUG && console.log(`✅[put] Code run. stdout: ${output}`);
 
   // And update the workspace
   const updatedWorkspace = await prisma.workspace.update({

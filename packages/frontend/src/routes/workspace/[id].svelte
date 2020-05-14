@@ -47,14 +47,15 @@
     try {
       running.set(true);
 
-      const response = await fetch(`${API_URL}/workspace/${workspace.id}`, {
+      let response = await fetch(`${API_URL}/workspace/${workspace.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({ code: $code })
       });
-      console.log("what", response);
+      response = await response.json();
+      console.log("Response: ", response);
 
       output.set(response.output);
     } catch (e) {

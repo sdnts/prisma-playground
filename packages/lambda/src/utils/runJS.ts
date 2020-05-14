@@ -1,19 +1,23 @@
-export default function runJS(code: string): string {
+export default function runJS(code: string, projectDir: string): string {
   const env = {
     _stdout: "",
 
-    require: function () {
-      env._stdout += "LMAO Nice try";
-      return undefined;
+    require: function (module: string): any {
+      if (module !== "@prisma/client") {
+        env._stdout += `"LMAO Nice try, you can only import "@prisma/client".`;
+        return;
+      }
+
+      return require(`${projectDir}/node_modules/@prisma/client`);
     },
 
     console: {
       log: function (...args: any[]) {
-        env._stdout += args.map((a) => String(a));
+        env._stdout += args.map((a) => `"${String(a)}"`);
         return undefined;
       },
       error: function (...args: any[]) {
-        env._stdout += args.map((a) => String(a));
+        env._stdout += args.map((a) => `"${String(a)}"`);
         return undefined;
       },
     },
