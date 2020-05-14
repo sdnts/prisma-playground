@@ -1,7 +1,7 @@
 <script>
   import { goto } from "@sapper/app";
 
-  import { API_URL } from "../constants/url";
+  import { API_URL } from "../constants";
 
   export async function create() {
     const res = await fetch(`${API_URL}/workspace`, {
