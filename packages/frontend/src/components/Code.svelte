@@ -20,7 +20,7 @@
       theme: "material-darker"
     });
 
-    code.subscribe(c => editor.setValue(c));
+    editor.on("changes", () => code.set(editor.getValue()));
   });
 
   let run = () => dispatch("run");

@@ -17,7 +17,7 @@
       theme: "material-darker"
     });
 
-    schema.subscribe(c => editor.setValue(c));
+    editor.on("changes", () => schema.set(editor.getValue()));
   });
 
   let save = () => dispatch("save");

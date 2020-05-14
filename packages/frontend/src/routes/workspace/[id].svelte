@@ -46,7 +46,7 @@
   export let runCode = async () => {
     try {
       running.set(true);
-      console.log("running");
+      console.log("running", $code);
       const response = await fetch(`${API_URL}/workspace/${workspace.id}`, {
         method: "PUT",
         headers: {
