@@ -28,6 +28,7 @@
   import { active } from "../../stores/tabs";
   import { code, running } from "../../stores/code";
   import { schema, saving } from "../../stores/schema";
+  import { output, visible as outputVisible } from "../../stores/output";
 
   import Tab from "../../components/Tab.svelte";
   import Code from "../../components/Code.svelte";
@@ -43,8 +44,6 @@
   let switchToSchema = () => active.set("schema");
 
   export let runCode = async () => {
-    let output = "";
-
     try {
       running.set(true);
 
@@ -57,13 +56,12 @@
       });
       console.log("what", response);
 
-      output = response.output;
+      output.set(response.output);
     } catch (e) {
       console.log("Error in PUT request: ", e);
-      output = e.toString();
+      output.set(e.toString());
     } finally {
       running.set(false);
-      output.set(output);
       outputVisible.set(true);
     }
   };
