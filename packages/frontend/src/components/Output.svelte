@@ -70,6 +70,7 @@
 
   .output {
     padding: 0 20px;
+    margin-top: 10px;
   }
 
   .output.visible {

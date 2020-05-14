@@ -5,28 +5,40 @@ import post from "./post";
 import put from "./put";
 import del from "./delete";
 
-exports.handler = function workspace(
+exports.handler = async function workspace(
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> {
+  let response: APIGatewayProxyResult;
+
   try {
     switch (event.httpMethod) {
       case "GET":
-        return get(event);
+        response = await get(event);
       case "POST":
-        return post();
+        response = await post();
       case "PUT":
-        return put(event);
+        response = await put(event);
       case "DELETE":
-        return del(event);
+        response = await del(event);
       default:
-        return Promise.resolve({
+        response = {
           statusCode: 400,
           body: JSON.stringify({ error: "Bad Request" }),
-        });
+        };
     }
+
+    return {
+      ...response,
+      headers: {
+        ...response.headers,
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      },
+    };
   } catch (e) {
     return Promise.resolve({
       statusCode: 500,
+      headers: {},
       body: JSON.stringify({
         error: e.toString(),
         message: "Please contact me@madebysid.com",
