@@ -70,7 +70,7 @@ export default async function put(
   // Copy over this workspace's file system from S3
   await downloadDir(`workspace/${id}`);
   process.env.DEBUG &&
-    console.log(`✅[put] Downloaded relevant files from S3 to ${tmpDirectory}`);
+    console.log(`✅[put] Downloaded relevant files from S3 in ${tmpDirectory}`);
 
   let output = "";
 

@@ -8,6 +8,11 @@ export default function runJS(code: string, projectDir: string): string {
         return;
       }
 
+      process.env.DEBUG &&
+        console.log(
+          "Imported Prisma Client, returning: ",
+          require(`${projectDir}/node_modules/@prisma/client`)
+        );
       return require(`${projectDir}/node_modules/@prisma/client`);
     },
 

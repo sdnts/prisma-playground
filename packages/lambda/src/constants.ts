@@ -22,7 +22,7 @@ model Post {
 `.trim();
 
 export const DEFAULT_CODE = `
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
@@ -33,5 +33,5 @@ const main = async () => {
 
 main()
   .catch(e => console.log(e))
-  .finally(() => prisma.disconnect())
+  .finally(() => prisma.disconnect());
 `.trim();
