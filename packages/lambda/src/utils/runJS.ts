@@ -10,7 +10,11 @@ export default function runJS(code: string, projectDir: string): string {
 
       const module = require(`${projectDir}/node_modules/@prisma/client/index.js`);
       process.env.DEBUG &&
-        console.log("Imported Prisma Client, returning: ", module);
+        console.log(
+          `Imported Prisma Client from ${projectDir}, returning: `,
+          module,
+          module.PrismaClient
+        );
       return module;
     },
 
