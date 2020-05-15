@@ -8,27 +8,13 @@ export default function runJS(code: string, projectDir: string): string {
         return;
       }
 
-      module.paths.push(`${projectDir}/node_modules`);
-      const m = require(`${projectDir}/node_modules/@prisma/client/index.js`);
-      process.env.DEBUG &&
-        console.log(
-          `Imported Prisma Client from ${projectDir}, returning: `,
-          m,
-          m.PrismaClient
-        );
-      return m;
+      module.paths.push(projectDir); // Add the project's root the list of paths node will search when require-ing a module
+      return require(`${projectDir}/node_modules/@prisma/client`);
     },
 
     console: {
       log: function (...args: any[]) {
-        env._stdout += args
-          .map((a) => {
-            if (Array.isArray(a) || typeof a === "object") {
-              return JSON.stringify(a);
-            }
-            return `"${String(a)}"`;
-          })
-          .join(", ");
+        env._stdout += args.map((a) => JSON.stringify(a, null, 2)).join(", ");
         env._stdout += "\n";
 
         return;
