@@ -26,6 +26,9 @@ export default async function del(
     };
   }
 
+  // TODO:: Delete this workspace from S3
+
+  // Delete this workspace from our DB
   const prisma = new PrismaClient();
   const workspace = await prisma.workspace.delete({
     where: { id },

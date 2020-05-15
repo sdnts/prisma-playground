@@ -12,7 +12,6 @@ export default async function get(
   process.env.DEBUG && console.log("✅[get] Received request: ", { event });
 
   const { id } = event.pathParameters || {};
-
   if (!id) {
     return {
       statusCode: 400,
@@ -26,7 +25,6 @@ export default async function get(
   const prisma = new PrismaClient();
   const workspace = await prisma.workspace.findOne({ where: { id } });
   await prisma.disconnect();
-  process.env.DEBUG && console.log(`✅[get] Found workspace with id ${id}`);
 
   if (!workspace) {
     return {

@@ -29,12 +29,15 @@ export default async function post(
   await exec(`mkdir ${tmpDirectory}`);
   await exec(
     `cat <<EOF > ${tmpDirectory}/schema.prisma \n${workspaceSchema}\nEOF`
-  );
+  ); // Create the schema file
   await exec(`mkdir node_modules`, {
     cwd: tmpDirectory,
   });
+  // Copy over @prisma/client and @prisma/cli from lambda's archive since they're the same.
+  // This allows us to not do an `npm install` in `tmpDirectory`
   await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`);
-  // Clean up `tmpDirectory` directory by removing unnecessary files
+
+  // However, there are extra files that the lambda archive needs, but the "workspace" doesn't. Delete them.
   await exec(
     [
       "rm -rf",
@@ -102,8 +105,8 @@ export default async function post(
     `✅[post] Provisioned & set up database for workspace ${workspaceId}`
   );
 
+  // Generate Prisma Client for the workspace
   try {
-    // Generate Prisma Client for the workspace
     await exec(
       ["./node_modules/@prisma/cli/build/index.js", "generate"].join(" "),
       {
@@ -120,12 +123,12 @@ export default async function post(
   }
   console.log(`✅[post] Generated Prisma Client for workspace ${workspaceId}`);
 
-  // Upload `tmpDirectory` directory to S3 for storage
+  // Upload `tmpDirectory` directory to S3 for storage (so that Client doesn't need to be generated over and over + to save migration steps on a file system)
   await uploadDir(tmpDirectory);
   console.log(`✅[post] Uploaded relevant files to S3 from ${workspaceId}`);
 
+  // Then, create the workspace in our database's `Workspace` table
   const prisma = new PrismaClient();
-  // Then, create the workspace
   const workspace = await prisma.workspace.create({
     data: {
       id: workspaceId,

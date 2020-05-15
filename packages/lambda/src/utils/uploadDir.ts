@@ -25,9 +25,9 @@ async function walk(dir: string): Promise<string[]> {
 }
 
 /**
- * Uploads a workspace from `/tmp` to S3's `prisma-playground/{dir}` key
+ * Uploads a workspace from `/tmp` to the `prisma-playground` S3 bucket
  *
- * @param dir S3 Directory to upload
+ * @param dir Directory (workspace) to upload
  */
 export default async function uploadDir(dir: string) {
   const s3 = new AWS.S3();

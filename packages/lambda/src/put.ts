@@ -15,7 +15,10 @@ import runJS from "./utils/runJS";
 export default async function put(
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> {
-  process.env.DEBUG && console.log("[put] Received request: ", { event });
+  process.env.DEBUG &&
+    console.log("[put] Received request: ", {
+      event,
+    });
 
   const { id } = event.pathParameters || {};
   if (!id) {
@@ -33,11 +36,10 @@ export default async function put(
     };
   }
 
+  // First, find the workspace we'll update
   const prisma = new PrismaClient();
   const workspace = await prisma.workspace.findOne({ where: { id } });
   if (!workspace) {
-    process.env.DEBUG &&
-      console.log(`❌[put] Unable to find workspace with id: ${id}`);
     return {
       statusCode: 404,
       headers: {
@@ -52,8 +54,8 @@ export default async function put(
   }
 
   const { schema, code } = JSON.parse(event.body || "{}");
+  // If neither schema nor code need changing, there's nothing to do
   if (!schema && !code) {
-    process.env.DEBUG && console.log(`✅[put] No changes requested`);
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -64,6 +66,7 @@ export default async function put(
     };
   }
 
+  // Create a `tmpDirectory`, we will download this workspace's generated client + migration steps here (created during workspace creation in POST)
   const tmpDirectory = `/tmp/${id}`;
   const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${id}`;
 
@@ -72,8 +75,6 @@ export default async function put(
   await downloadDir(`workspace/${id}`);
   process.env.DEBUG &&
     console.log(`✅[put] Downloaded relevant files from S3 in ${tmpDirectory}`);
-
-  let output = "";
 
   // If the schema has changed, migrate up!
   if (schema && workspace.schema !== schema) {
@@ -97,7 +98,6 @@ export default async function put(
     } catch (e) {
       // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
-    process.env.DEBUG && console.log(`✅[put] Migrate save complete`);
 
     try {
       await exec(
@@ -116,11 +116,10 @@ export default async function put(
     } catch (e) {
       // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
-    process.env.DEBUG && console.log(`✅[put] Migrate up complete`);
+    process.env.DEBUG && console.log(`✅[put] Migration complete`);
 
-    // Generate
+    // And then generate Prisma Client for the workspace (since schema changed)
     try {
-      // Generate Prisma Client for the workspace
       await exec(
         ["./node_modules/@prisma/cli/build/index.js", "generate"].join(" "),
         {
@@ -136,7 +135,7 @@ export default async function put(
     }
     process.env.DEBUG && console.log(`✅[put] Client generation complete`);
 
-    // Upload all changes to S3 again
+    // Upload all changes to S3 again, since they've changed. Delete all extra files as in POST
     await exec(
       [
         "rm -rf",
@@ -156,7 +155,10 @@ export default async function put(
         "node_modules/.prisma/client/runtime/highlight",
         "node_modules/.prisma/client/runtime/utils",
       ].join(" "),
-      { shell: "/bin/sh", cwd: tmpDirectory }
+      {
+        shell: "/bin/sh",
+        cwd: tmpDirectory,
+      }
     );
     process.env.DEBUG &&
       console.log(`✅[put] Removed unnecessary files from ${tmpDirectory}`);
@@ -165,15 +167,13 @@ export default async function put(
     await uploadDir(tmpDirectory);
     process.env.DEBUG &&
       console.log(`✅[put] Uploaded relevant files to S3 from ${tmpDirectory}`);
-
-    output = "Migration Complete";
   }
 
-  // Run code
-  output = runJS(code, tmpDirectory);
+  // If either code or schema changed, the code will need to be re-run.
+  const output = runJS(code, tmpDirectory);
   process.env.DEBUG && console.log(`✅[put] Code run. stdout: ${output}`);
 
-  // And update the workspace
+  // And finally, update the workspace with the new code and schema (if changed)
   const updatedWorkspace = await prisma.workspace.update({
     where: { id },
     data: {
@@ -182,7 +182,6 @@ export default async function put(
     },
   });
   await prisma.disconnect();
-  process.env.DEBUG && console.log(`✅[put] Workspace ${id} updated`);
 
   return {
     statusCode: 200,
