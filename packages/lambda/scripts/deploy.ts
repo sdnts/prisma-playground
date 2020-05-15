@@ -1,6 +1,6 @@
 import path from "path";
 
-import exec from '../src/utils/exec'
+import exec from "../src/utils/exec";
 
 async function main() {
   // We're going through all these hoops for two reasons:
@@ -21,7 +21,10 @@ async function main() {
 
   // Copy all source files used in the lambda function to this directory
   await exec("./node_modules/.bin/tsc", { cwd: input });
-  await exec("cp -R prisma/schema.prisma archive", { cwd: input, shell: '/bin/sh' });
+  await exec("cp -R prisma/schema.prisma archive", {
+    cwd: input,
+    shell: "/bin/sh",
+  });
   console.log("✅ Copied necessary files to directory");
 
   // Generate an npm project in the directory and install relevant packages
@@ -57,13 +60,13 @@ async function main() {
       // Remove all engines too, we'll manually download the correct ones
       "node_modules/@prisma/cli/introspection-*",
       "node_modules/@prisma/cli/migration-*",
-      "node_modules/@prisma/cli/prisma-*",
+      "node_modules/@prisma/cli/prisma-fmt-*",
       "node_modules/@prisma/cli/query-*",
       "node_modules/.prisma/client/query-*",
     ].join(" "),
     {
       cwd: output,
-      shell:'/bin/sh',
+      shell: "/bin/sh",
     }
   );
   console.log("✅ Removed unnecessary files from directory");

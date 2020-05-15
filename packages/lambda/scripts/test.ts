@@ -1,7 +1,10 @@
-const fs = require("fs").promises;
-const path = require("path");
-const dotenv = require("dotenv");
-const { handler: lambda } = require("../src/index");
+import { promises as fs } from "fs";
+import path from "path";
+import dotenv from "dotenv";
+
+import { handler as lambda } from "../src/index";
+import downloadDir from "../src/utils/downloadDir";
+import { AnyCnameRecord } from "dns";
 
 (async () => {
   try {
@@ -14,6 +17,8 @@ const { handler: lambda } = require("../src/index");
       ...process.env,
       ...env,
     };
+
+    // await downloadDir("workspace/2a805473-7f6a-420d-bc22-e07d2559d27d");
 
     const response = await lambda({
       httpMethod: "PUT",
@@ -38,7 +43,7 @@ const { handler: lambda } = require("../src/index");
           .finally(() => prisma.disconnect())
       `.trim(),
       }),
-    });
+    } as any);
 
     console.log("Response: ", JSON.parse(response.body).output);
   } catch (e) {

@@ -14,7 +14,10 @@ import { DEFAULT_SCHEMA, DEFAULT_CODE } from "./constants";
 export default async function post(
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> {
-  process.env.DEBUG && console.log("[post] Received request: ", { event });
+  process.env.DEBUG &&
+    console.log("[post] Received request: ", {
+      event,
+    });
 
   const workspaceId = uuid();
   const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${workspaceId}`;
@@ -27,69 +30,14 @@ export default async function post(
   await exec(
     `cat <<EOF > ${tmpDirectory}/schema.prisma \n${workspaceSchema}\nEOF`
   );
-  await exec(`mkdir node_modules`, { cwd: tmpDirectory });
-  await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`);
-  await exec(`ln -sf node_modules/@prisma/cli/build/index.js ./prisma`, {
+  await exec(`mkdir node_modules`, {
     cwd: tmpDirectory,
-  }); // Create a symlink for easy invocation
-  console.log(`✅ Set up Prisma project in ${tmpDirectory}`);
-
-  // Then, provision a database & run an initial migration to get it to the correct state
-  try {
-    await exec(
-      [
-        "./prisma migrate save --experimental",
-        "--create-db",
-        '--name "Initial"',
-      ].join(" "),
-      {
-        cwd: tmpDirectory,
-        env: {
-          ...process.env,
-          DB_URL: workspaceDbUrl,
-        },
-      }
-    );
-  } catch (e) {
-    // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
-  }
-
-  try {
-    await exec("./prisma migrate up --experimental", {
-      cwd: tmpDirectory,
-      env: {
-        ...process.env,
-        DB_URL: workspaceDbUrl,
-      },
-    });
-  } catch (e) {
-    // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
-  }
-
-  console.log(`✅ Provisioned & set up database for workspace ${workspaceId}`);
-
-  try {
-    // Generate Prisma Client for the workspace
-    await exec("./prisma generate", {
-      cwd: tmpDirectory,
-      env: {
-        ...process.env,
-        DB_URL: workspaceDbUrl,
-      },
-    });
-    console.log("PRISMA GENERATE");
-  } catch (e) {
-    // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
-  }
-
-  console.log(`✅ Generated Prisma Client for workspace ${workspaceId}`);
-
+  });
+  await exec(`cp -R node_modules/@prisma ${tmpDirectory}/node_modules`);
   // Clean up `tmpDirectory` directory by removing unnecessary files
   await exec(
     [
       "rm -rf",
-      // prisma symlink
-      "prisma",
       // @prisma/client
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
@@ -105,14 +53,76 @@ export default async function post(
       "node_modules/.prisma/client/runtime/*.map",
       "node_modules/.prisma/client/runtime/highlight",
       "node_modules/.prisma/client/runtime/utils",
+      // @prisma/cli
+      "node_modules/@prisma/cli/introspection-*",
+      "node_modules/@prisma/cli/prisma-fmt-*",
     ].join(" "),
     { shell: "/bin/sh", cwd: tmpDirectory }
   );
-  console.log(`✅ Removed unnecessary files from ${tmpDirectory}`);
+  console.log(`✅[post] Set up Prisma project in ${tmpDirectory}`);
+
+  // Then, provision a database & run an initial migration to get it to the correct state
+  try {
+    await exec(
+      [
+        "./node_modules/@prisma/cli/build/index.js",
+        "migrate save --experimental",
+        "--create-db",
+        '--name "Initial"',
+      ].join(" "),
+      {
+        cwd: tmpDirectory,
+        env: {
+          ...process.env,
+          DB_URL: workspaceDbUrl,
+        },
+      }
+    );
+  } catch (e) {
+    // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
+  }
+  try {
+    await exec(
+      [
+        "./node_modules/@prisma/cli/build/index.js",
+        "migrate up --experimental",
+      ].join(" "),
+      {
+        cwd: tmpDirectory,
+        env: {
+          ...process.env,
+          DB_URL: workspaceDbUrl,
+        },
+      }
+    );
+  } catch (e) {
+    // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
+  }
+  console.log(
+    `✅[post] Provisioned & set up database for workspace ${workspaceId}`
+  );
+
+  try {
+    // Generate Prisma Client for the workspace
+    await exec(
+      ["./node_modules/@prisma/cli/build/index.js", "generate"].join(" "),
+      {
+        cwd: tmpDirectory,
+        env: {
+          ...process.env,
+          DB_URL: workspaceDbUrl,
+        },
+      }
+    );
+    console.log("PRISMA GENERATE");
+  } catch (e) {
+    // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
+  }
+  console.log(`✅[post] Generated Prisma Client for workspace ${workspaceId}`);
 
   // Upload `tmpDirectory` directory to S3 for storage
   await uploadDir(tmpDirectory);
-  console.log(`✅ Uploaded relevant files to S3 from ${workspaceId}`);
+  console.log(`✅[post] Uploaded relevant files to S3 from ${workspaceId}`);
 
   const prisma = new PrismaClient();
   // Then, create the workspace
@@ -124,7 +134,7 @@ export default async function post(
     },
   });
   await prisma.disconnect();
-  console.log(`✅ Created workspace ${workspaceId}`);
+  console.log(`✅[post] Created workspace ${workspaceId}`);
 
   // And send it back
   return {
@@ -132,6 +142,9 @@ export default async function post(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ error: null, workspace }),
+    body: JSON.stringify({
+      error: null,
+      workspace,
+    }),
   };
 }

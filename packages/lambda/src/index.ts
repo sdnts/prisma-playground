@@ -5,7 +5,7 @@ import post from "./post";
 import put from "./put";
 import del from "./delete";
 
-exports.handler = async function workspace(
+export const handler = async function workspace(
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> {
   let response: APIGatewayProxyResult;

@@ -68,6 +68,7 @@ export default async function put(
   const workspaceDbUrl = `${process.env.WORKSPACE_DB_URL}/${id}`;
 
   // Copy over this workspace's file system from S3
+  await exec(`rm -rf ${tmpDirectory}`);
   await downloadDir(`workspace/${id}`);
   process.env.DEBUG &&
     console.log(`✅[put] Downloaded relevant files from S3 in ${tmpDirectory}`);
@@ -76,15 +77,12 @@ export default async function put(
 
   // If the schema has changed, migrate up!
   if (schema && workspace.schema !== schema) {
-    await exec(`ln -sf node_modules/@prisma/cli/build/index.js ./prisma`, {
-      cwd: tmpDirectory,
-    }); // Create a symlink for easy invocation
-
     // Migrate
     try {
       await exec(
         [
-          "./prisma migrate save --experimental",
+          "./node_modules/@prisma/cli/build/index.js",
+          "migrate save --experimental",
           "--create-db",
           '--name ""',
         ].join(" "),
@@ -102,13 +100,19 @@ export default async function put(
     process.env.DEBUG && console.log(`✅[put] Migrate save complete`);
 
     try {
-      await exec("./prisma migrate up --experimental", {
-        cwd: tmpDirectory,
-        env: {
-          ...process.env,
-          DB_URL: workspaceDbUrl,
-        },
-      });
+      await exec(
+        [
+          "./node_modules/@prisma/cli/build/index.js",
+          "migrate up --experimental",
+        ].join(" "),
+        {
+          cwd: tmpDirectory,
+          env: {
+            ...process.env,
+            DB_URL: workspaceDbUrl,
+          },
+        }
+      );
     } catch (e) {
       // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
@@ -117,13 +121,16 @@ export default async function put(
     // Generate
     try {
       // Generate Prisma Client for the workspace
-      await exec("./prisma generate", {
-        cwd: tmpDirectory,
-        env: {
-          ...process.env,
-          DB_URL: workspaceDbUrl,
-        },
-      });
+      await exec(
+        ["./node_modules/@prisma/cli/build/index.js", "generate"].join(" "),
+        {
+          cwd: tmpDirectory,
+          env: {
+            ...process.env,
+            DB_URL: workspaceDbUrl,
+          },
+        }
+      );
     } catch (e) {
       // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
@@ -133,8 +140,6 @@ export default async function put(
     await exec(
       [
         "rm -rf",
-        // prisma symlink
-        "prisma",
         // @prisma/client
         "node_modules/@prisma/client/*.d.ts",
         "node_modules/@prisma/client/*.md",
