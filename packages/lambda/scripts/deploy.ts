@@ -1,13 +1,6 @@
-const path = require("path");
-const child_process = require("child_process");
+import path from "path";
 
-function exec(command, options = {}) {
-  return new Promise((resolve, reject) =>
-    child_process.exec(command, options, (error, stdout, stderr) => {
-      return error ? reject(stderr) : resolve(stdout);
-    })
-  );
-}
+import exec from '../src/utils/exec'
 
 async function main() {
   // We're going through all these hoops for two reasons:
@@ -28,7 +21,7 @@ async function main() {
 
   // Copy all source files used in the lambda function to this directory
   await exec("./node_modules/.bin/tsc", { cwd: input });
-  await exec("cp -R prisma/schema.prisma archive", { cwd: input, shell: true });
+  await exec("cp -R prisma/schema.prisma archive", { cwd: input, shell: '/bin/sh' });
   console.log("✅ Copied necessary files to directory");
 
   // Generate an npm project in the directory and install relevant packages
@@ -70,7 +63,7 @@ async function main() {
     ].join(" "),
     {
       cwd: output,
-      shell: true,
+      shell:'/bin/sh',
     }
   );
   console.log("✅ Removed unnecessary files from directory");
