@@ -112,7 +112,7 @@ async function main() {
   await exec(
     [
       "aws lambda update-function-code",
-      "--function-name PrismaPlaygroundWorkspace",
+      "--function-name PrismaPlaygroundWorkspaces",
       "--zip-file fileb://archive.zip",
     ].join(" ")
   );
