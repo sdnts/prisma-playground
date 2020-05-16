@@ -36,6 +36,16 @@ export default async function put(
     };
   }
 
+  // Prisma Binaries are not part of the S3 workspace, so override the "expected" location with the ones in the Lambda archive
+  process.env.PRISMA_QUERY_ENGINE_BINARY = path.resolve(
+    require.resolve("@prisma/cli"),
+    `../../query-engine-${process.env.PRISMA_BINARY_PLATFORM}`
+  );
+  process.env.PRISMA_MIGRATION_ENGINE_BINARY = path.resolve(
+    require.resolve("@prisma/cli"),
+    `../../migration-engine-${process.env.PRISMA_BINARY_PLATFORM}`
+  );
+
   // First, find the workspace we'll update
   const prisma = new PrismaClient();
   const workspace = await prisma.workspace.findOne({ where: { id } });
@@ -75,16 +85,6 @@ export default async function put(
   await downloadDir(`workspace/${id}`);
   process.env.DEBUG &&
     console.log(`✅[put] Downloaded relevant files from S3 in ${tmpDirectory}`);
-
-  // Prisma Binaries are not part of the S3 workspace, so override the "expected" location with the ones in the Lambda archive
-  process.env.PRISMA_QUERY_ENGINE_BINARY = path.resolve(
-    require.resolve("@prisma/cli"),
-    `../../query-engine-${process.env.PRISMA_BINARY_PLATFORM}`
-  );
-  process.env.PRISMA_MIGRATION_ENGINE_BINARY = path.resolve(
-    require.resolve("@prisma/cli"),
-    `../../migration-engine-${process.env.PRISMA_BINARY_PLATFORM}`
-  );
 
   // If the schema has changed, migrate up!
   if (schema && workspace.schema !== schema) {
