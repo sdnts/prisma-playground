@@ -185,7 +185,9 @@ export default async function put(
   }
 
   // If either code or schema changed, the code will need to be re-run.
-  const output = await runJS(code, tmpDirectory);
+  const output = await runJS(code, {
+    workspace: { dir: tmpDirectory, dbUrl: workspaceDbUrl },
+  });
   process.env.DEBUG && console.log(`✅[put] Code run. stdout: ${output}`);
 
   // And finally, update the workspace with the new code and schema (if changed)

@@ -9,7 +9,7 @@ generator client {
 }
 
 model User {
-  id     Int     @id
+  id     Int     @id @default(autoincrement())
   name   String
   posts  Post[]
 }

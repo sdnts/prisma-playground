@@ -1,5 +1,13 @@
 import { Worker } from "worker_threads";
 import path from "path";
+import { WorkspaceClient } from "@prisma/client";
+
+type RunJSOptions = {
+  workspace: {
+    dir: string;
+    dbUrl: string;
+  };
+};
 
 /**
  * Runs code in a workspace
@@ -9,24 +17,19 @@ import path from "path";
  */
 export default function runJS(
   code: string,
-  projectDir: string
+  { workspace: { dir, dbUrl } }: RunJSOptions
 ): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
-    process.env.DEBUG &&
-      console.log(
-        "[runJS] PRISMA_QUERY_ENGINE_BINARY",
-        process.env.PRISMA_QUERY_ENGINE_BINARY
-      );
     const worker = new Worker(path.resolve(__dirname, "./sandbox.js"), {
       stdout: true,
       stderr: true,
       env: {
         PRISMA_QUERY_ENGINE_BINARY: process.env.PRISMA_QUERY_ENGINE_BINARY,
-        DB_URL: process.env.DB_URL,
+        DB_URL: dbUrl,
       },
       workerData: {
         code,
-        projectDir,
+        workspaceDir: dir,
       },
     });
 

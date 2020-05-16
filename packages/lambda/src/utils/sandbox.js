@@ -4,7 +4,7 @@
 
 const { workerData } = require("worker_threads");
 
-const { code, projectDir } = workerData;
+const { code, workspaceDir } = workerData;
 const env = {
   require: function (moduleId) {
     // Only allow @prisma/client imports
@@ -13,8 +13,8 @@ const env = {
     }
 
     // Add the project's root to the list of paths node will search when require-ing a module
-    module.paths.push(projectDir);
-    return require(`${projectDir}/node_modules/@prisma/client`);
+    module.paths.push(workspaceDir);
+    return require(`${workspaceDir}/node_modules/@prisma/client`);
   },
 };
 
