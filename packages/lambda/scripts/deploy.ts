@@ -94,11 +94,7 @@ async function main() {
 
   // Move them to their correct locations (& rename)
   await exec(
-    "cp query-engine node_modules/@prisma/cli/query-engine-rhel-openssl-1.0.x",
-    { cwd: output }
-  );
-  await exec(
-    "mv query-engine node_modules/.prisma/client/query-engine-rhel-openssl-1.0.x",
+    "mv query-engine node_modules/@prisma/cli/query-engine-rhel-openssl-1.0.x",
     { cwd: output }
   );
   await exec(

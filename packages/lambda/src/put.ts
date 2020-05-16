@@ -1,8 +1,8 @@
+import path from "path";
+import { PrismaClient } from "@prisma/client";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
-import { PrismaClient } from "@prisma/client";
 import exec from "./utils/exec";
-
 import downloadDir from "./utils/downloadDir";
 import uploadDir from "./utils/uploadDir";
 import runJS from "./utils/runJS";
@@ -78,6 +78,16 @@ export default async function put(
 
   // If the schema has changed, migrate up!
   if (schema && workspace.schema !== schema) {
+    // Prisma Binaries are not part of the S3 workspace, so override the "expected" location with the ones in the Lambda archive
+    process.env.PRISMA_QUERY_ENGINE_BINARY = path.resolve(
+      __dirname,
+      "./node_modules/@prisma/cli/query-engine-rhel-openssl-1.0.x"
+    );
+    process.env.PRISMA_MIGRATION_ENGINE_BINARY = path.resolve(
+      __dirname,
+      "./node_modules/@prisma/cli/migration-engine-rhel-openssl-1.0.x"
+    );
+
     // Migrate
     try {
       await exec(
@@ -154,6 +164,11 @@ export default async function put(
         "node_modules/.prisma/client/runtime/*.map",
         "node_modules/.prisma/client/runtime/highlight",
         "node_modules/.prisma/client/runtime/utils",
+        // @prisma/cli
+        "node_modules/@prisma/cli/query-*",
+        "node_modules/@prisma/cli/migration-*",
+        "node_modules/@prisma/cli/introspection-*",
+        "node_modules/@prisma/cli/prisma-fmt-*",
       ].join(" "),
       {
         shell: "/bin/sh",
