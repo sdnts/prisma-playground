@@ -1,49 +1,47 @@
+import { Worker } from "worker_threads";
+import path from "path";
+
 /**
  * Runs code in a workspace
  *
  * @param code The code to run
  * @param projectDir The directory (workspace) to run it in
  */
-export default function runJS(code: string, projectDir: string): string {
-  // First, we need to override the environment that the code runs in, to disable arbitray imports.
-  // This creates a semi-secure sandbpx.
-  const env = {
-    _stdout: "",
-
-    require: function (moduleId: string): any {
-      // Only allow @prisma/client imports
-      if (moduleId !== "@prisma/client") {
-        env._stdout += `"LMAO Nice try, you can only import "@prisma/client".`;
-        return;
-      }
-
-      // Add the project's root the list of paths node will search when require-ing a module
-      module.paths.push(projectDir);
-      return require(`${projectDir}/node_modules/@prisma/client`);
-    },
-
-    console: {
-      log: function (...args: any[]) {
-        env._stdout += args.map((a) => JSON.stringify(a, null, 2)).join(", ");
-        env._stdout += "\n";
-        return;
+export default function runJS(
+  code: string,
+  projectDir: string
+): Promise<{ stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(path.resolve(__dirname, "./sandbox.js"), {
+      stdout: true,
+      stderr: true,
+      env: {
+        PRISMA_QUERY_ENGINE_BINARY: process.env.PRISMA_QUERY_ENGINE_BINARY,
+        DB_URL: process.env.DB_URL,
       },
-    },
-  };
+      workerData: {
+        code,
+        projectDir,
+      },
+    });
 
-  // And run the code
-  new Function(
-    "env",
-    `
-      try {
-        const { require, console } = env;
-        ${code}
-      }
-      catch (e) {
-        env._stdout += e.toString()
-      }
-    `
-  )(env);
+    let stdout = "";
+    let stderr = "";
+    worker.stdout.on("data", (data) => {
+      stdout += data.toString();
+    });
+    worker.stderr.on("data", (data) => {
+      stderr += data.toString();
+    });
 
-  return env._stdout;
+    worker.on("exit", (code) => {
+      if (code !== 0) {
+        return reject(
+          new Error(`[sandbox] Worker stopped with exit code ${code}`)
+        );
+      }
+
+      return resolve({ stdout, stderr });
+    });
+  });
 }
