@@ -76,18 +76,18 @@ export default async function put(
   process.env.DEBUG &&
     console.log(`✅[put] Downloaded relevant files from S3 in ${tmpDirectory}`);
 
+  // Prisma Binaries are not part of the S3 workspace, so override the "expected" location with the ones in the Lambda archive
+  process.env.PRISMA_QUERY_ENGINE_BINARY = path.resolve(
+    require.resolve("@prisma/cli"),
+    `../../query-engine-${process.env.PRISMA_BINARY_PLATFORM}`
+  );
+  process.env.PRISMA_MIGRATION_ENGINE_BINARY = path.resolve(
+    require.resolve("@prisma/cli"),
+    `../../migration-engine-${process.env.PRISMA_BINARY_PLATFORM}`
+  );
+
   // If the schema has changed, migrate up!
   if (schema && workspace.schema !== schema) {
-    // Prisma Binaries are not part of the S3 workspace, so override the "expected" location with the ones in the Lambda archive
-    process.env.PRISMA_QUERY_ENGINE_BINARY = path.resolve(
-      __dirname,
-      "./node_modules/@prisma/cli/query-engine-rhel-openssl-1.0.x"
-    );
-    process.env.PRISMA_MIGRATION_ENGINE_BINARY = path.resolve(
-      __dirname,
-      "./node_modules/@prisma/cli/migration-engine-rhel-openssl-1.0.x"
-    );
-
     // Migrate
     try {
       await exec(
@@ -185,7 +185,7 @@ export default async function put(
   }
 
   // If either code or schema changed, the code will need to be re-run.
-  const output = runJS(code, tmpDirectory);
+  const output = await runJS(code, tmpDirectory);
   process.env.DEBUG && console.log(`✅[put] Code run. stdout: ${output}`);
 
   // And finally, update the workspace with the new code and schema (if changed)

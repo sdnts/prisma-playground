@@ -69,12 +69,12 @@ export default async function post(
 
   // Prisma Binaries are not part of the S3 workspace, so override the "expected" location with the ones in the Lambda archive
   process.env.PRISMA_QUERY_ENGINE_BINARY = path.resolve(
-    __dirname,
-    "./node_modules/@prisma/cli/query-engine-rhel-openssl-1.0.x"
+    require.resolve("@prisma/cli"),
+    `../../query-engine-${process.env.PRISMA_BINARY_PLATFORM}`
   );
   process.env.PRISMA_MIGRATION_ENGINE_BINARY = path.resolve(
-    __dirname,
-    "./node_modules/@prisma/cli/migration-engine-rhel-openssl-1.0.x"
+    require.resolve("@prisma/cli"),
+    `../../migration-engine-${process.env.PRISMA_BINARY_PLATFORM}`
   );
 
   // Then, provision a database & run an initial migration to get it to the correct state

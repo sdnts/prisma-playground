@@ -1,5 +1,6 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import path from "path";
 import { PrismaClient } from "@prisma/client";
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 /**
  * Handles GET requests to this Lambda
@@ -21,6 +22,11 @@ export default async function get(
       body: JSON.stringify({ error: "Bad Request", workspace: null }),
     };
   }
+
+  process.env.PRISMA_QUERY_ENGINE_BINARY = path.resolve(
+    require.resolve("@prisma/cli"),
+    `../../query-engine-${process.env.PRISMA_BINARY_PLATFORM}`
+  );
 
   const prisma = new PrismaClient();
   const workspace = await prisma.workspace.findOne({ where: { id } });
