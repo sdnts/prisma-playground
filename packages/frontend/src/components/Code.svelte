@@ -13,10 +13,16 @@
     const editor = CodeMirror(root, {
       value: $code,
       lineNumbers: true,
+      autoCloseBrackets: true,
       matchBrackets: true,
+      continueComments: true,
       mode: "text/typescript",
       autofocus: true,
       theme: "material-darker"
+    });
+    editor.addKeyMap({
+      "Cmd-/": "toggleComment",
+      "Ctrl-/": "toggleComment"
     });
 
     editor.on("changes", () => code.set(editor.getValue()));

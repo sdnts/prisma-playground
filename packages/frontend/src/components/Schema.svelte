@@ -11,10 +11,16 @@
     const editor = CodeMirror(root, {
       value: $schema,
       lineNumbers: true,
+      autoCloseBrackets: true,
       matchBrackets: true,
+      continueComments: true,
       mode: "text/x-groovy",
       autofocus: true,
       theme: "material-darker"
+    });
+    editor.addKeyMap({
+      "Cmd-/": "toggleComment",
+      "Ctrl-/": "toggleComment"
     });
 
     editor.on("changes", () => schema.set(editor.getValue()));

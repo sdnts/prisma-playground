@@ -4,7 +4,7 @@
   import { API_URL } from "../constants";
 
   export async function create() {
-    const res = await fetch(`${API_URL}/workspace`, {
+    const res = await fetch(`${API_URL}/workspaces`, {
       method: "POST"
     });
     const workspace = await res.json();

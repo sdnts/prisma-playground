@@ -5,7 +5,7 @@
     const { id } = page.params;
 
     try {
-      const res = await this.fetch(`${API_URL}/workspace/${id}`);
+      const res = await this.fetch(`${API_URL}/workspaces/${id}`);
       const { error, workspace } = await res.json();
 
       if (res.status === 404) {
@@ -51,7 +51,7 @@
     try {
       running.set(true);
 
-      let response = await fetch(`${API_URL}/workspace/${workspace.id}`, {
+      let response = await fetch(`${API_URL}/workspaces/${workspace.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
