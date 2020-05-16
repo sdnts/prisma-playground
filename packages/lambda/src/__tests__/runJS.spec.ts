@@ -1,6 +1,7 @@
 import path from "path";
 import runJS from "../utils/runJS";
 
+const workspaceId = "2a805473-7f6a-420d-bc22-e07d2559d27d";
 const code = `
 const { PrismaClient } = require('@prisma/client');
 
@@ -26,10 +27,12 @@ describe("runJS", () => {
   });
 
   it("can run untrusted code", async () => {
-    const { stdout, stderr } = await runJS(
-      code,
-      "/tmp/2a805473-7f6a-420d-bc22-e07d2559d27d"
-    );
+    const { stdout, stderr } = await runJS(code, {
+      workspace: {
+        dbUrl: `${process.env.WORKSPACE_DB_URL}/${workspaceId}`,
+        dir: `/tmp/${workspaceId}`,
+      },
+    });
     expect(stdout).toEqual("[]\n");
     expect(stderr).toEqual("test\n");
   });
