@@ -12,6 +12,11 @@ export default function runJS(
   projectDir: string
 ): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
+    process.env.DEBUG &&
+      console.log(
+        "[runJS] PRISMA_QUERY_ENGINE_BINARY",
+        process.env.PRISMA_QUERY_ENGINE_BINARY
+      );
     const worker = new Worker(path.resolve(__dirname, "./sandbox.js"), {
       stdout: true,
       stderr: true,
