@@ -12,6 +12,7 @@
     font-family: monospace;
     font-size: 14px;
     cursor: pointer;
+    user-select: none;
   }
 
   button.active {

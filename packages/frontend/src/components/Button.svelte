@@ -18,6 +18,7 @@
     cursor: pointer;
     background: var(--accent-color);
     transition: all 0.5s;
+    user-select: none;
   }
 
   button {
