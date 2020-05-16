@@ -28,7 +28,11 @@
   import { active } from "../../stores/tabs";
   import { code, running } from "../../stores/code";
   import { schema, saving } from "../../stores/schema";
-  import { output, visible as outputVisible } from "../../stores/output";
+  import {
+    stdout,
+    stderr,
+    visible as outputVisible
+  } from "../../stores/output";
 
   import Tab from "../../components/Tab.svelte";
   import Code from "../../components/Code.svelte";
@@ -57,10 +61,11 @@
       response = await response.json();
       console.log("Response: ", response);
 
-      output.set(response.output);
+      stdout.set(response.output.stdout);
+      stderr.set(response.output.stderr);
     } catch (e) {
       console.log("Error in PUT request: ", e);
-      output.set(e.toString());
+      stderr.set(e.toString());
     } finally {
       running.set(false);
       outputVisible.set(true);

@@ -1,5 +1,4 @@
 <script>
-  import { output, visible } from "../stores/output";
   import { running } from "../stores/code";
 
   export let title;

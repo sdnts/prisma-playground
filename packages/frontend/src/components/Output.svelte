@@ -1,22 +1,35 @@
 <script>
   import { onMount } from "svelte";
 
-  import { visible, output } from "../stores/output";
+  import { visible, stdout, stderr } from "../stores/output";
   import Tab from "./Tab.svelte";
 
   onMount(() => {
-    const root = document.querySelector(".output");
-    const editor = CodeMirror(root, {
-      value: $output,
+    const stdoutRoot = document.querySelector(".stdout");
+    const stdoutEditor = CodeMirror(stdoutRoot, {
+      value: $stdout,
       mode: "application/ld+json",
       theme: "material-darker",
       readOnly: true
     });
 
-    output.subscribe(o => editor.setValue(o));
+    stdout.subscribe(o => stdoutEditor.setValue(o));
+
+    const stderrRoot = document.querySelector(".stderr");
+    const stderrEditor = CodeMirror(stderrRoot, {
+      value: $stderr,
+      mode: "application/ld+json",
+      theme: "material-darker",
+      readOnly: true
+    });
+
+    stderr.subscribe(o => stderrEditor.setValue(o));
   });
 
-  let toggle = () => visible.set(!$visible);
+  let toggle = () => {
+    console.log("tuggli");
+    visible.set(!$visible);
+  };
 </script>
 
 <style>
@@ -68,13 +81,39 @@
     right: initial;
   }
 
-  .output {
+  .editors {
     padding: 0 20px;
     margin-top: 10px;
+    display: flex;
+    position: relative;
   }
 
-  .output.visible {
+  .editors.visible {
     flex: 1;
+  }
+
+  .stdout,
+  .stderr {
+    flex: 1;
+  }
+
+  .stdout {
+    border-right: 1px solid var(--border-color);
+  }
+
+  .editors span {
+    position: absolute;
+    bottom: 10px;
+    color: var(--border-color);
+    font-size: 12px;
+  }
+
+  .editors span:nth-of-type(1) {
+    left: 10px;
+  }
+
+  .editors span:nth-of-type(2) {
+    left: calc(50% + 10px);
   }
 </style>
 
@@ -83,5 +122,11 @@
     <Tab active={$visible} on:click={toggle}>Output</Tab>
     <button class:open={$visible} on:click={toggle} />
   </header>
-  <div class="output" class:visible={$visible} />
+
+  <div class="editors" class:visible={$visible}>
+    <div class="stdout" />
+    <div class="stderr" />
+    <span>stdout</span>
+    <span>stderr</span>
+  </div>
 </section>
