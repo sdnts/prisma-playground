@@ -42,7 +42,8 @@ API Gateway is used to proxy 5 methods to invoke this lambda:
 
 ### Development
 
-The `test` NPM script can be run to test out the lambda.
+The `test` NPM script can be run to run a Jest test that can be used to see if the lambda behaves correctly.
+NOTE: These are not real tests, it was just simplest to set Jest up for local development
 
 ### Deployment
 
