@@ -25,7 +25,7 @@ const exec = (command, options) =>
     await exec(`cp -R __sapper__ archive`);
     await exec(`cp -R static archive`);
     await exec(`cp -R src/index.js archive`);
-    !process.env.CI && (await exec(`yarn`)); // Add devDependencies back if not on CI
+    !process.env.CI && (await exec(`yarn --force`)); // Add devDependencies back if not on CI
 
     console.log("✅ Generated archive");
 
