@@ -6,13 +6,17 @@ import * as sapper from "@sapper/server";
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === "development";
 
-polka() // You can also use Express
-  .use(
-    "/abusing/dbs",
-    compression({ threshold: 0 }),
-    sirv("static", { dev }),
-    sapper.middleware()
-  )
-  .listen(PORT, (err) => {
+const server = polka().use(
+  "/abusing/dbs",
+  compression({ threshold: 0 }),
+  sirv("static", { dev }),
+  sapper.middleware()
+);
+
+if (dev) {
+  server.listen(PORT, (err) => {
     if (err) console.log("error", err);
   });
+}
+
+module.exports = server;

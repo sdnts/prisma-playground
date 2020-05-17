@@ -2,7 +2,6 @@
   import { onMount, createEventDispatcher } from "svelte";
 
   import { code, running } from "../stores/code";
-  import { API_URL } from "../constants";
 
   import Button from "./Button.svelte";
 
