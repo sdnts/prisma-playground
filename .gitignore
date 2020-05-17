@@ -3,14 +3,14 @@
 yarn-error.log
 
 # Frontend
-packages/frontend/node_modules/
-packages/frontend/src/node_modules/@sapper/
-packages/frontend/__sapper__/
-packages/frontend/dist
-packages/frontend/worker
+packages/frontend/node_modules
+packages/frontend/src/node_modules/@sapper
+packages/frontend/__sapper__
+packages/frontend/archive
+packages/frontend/archive.zip
 
 # Lambdas
-packages/lambda/node_modules/
-packages/lambda/archive
-packages/lambda/archive.zip
-packages/lambda/.env
+packages/api/node_modules/
+packages/api/archive
+packages/api/archive.zip
+packages/api/.env

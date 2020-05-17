@@ -196,6 +196,7 @@ export default async function put(
     data: {
       code,
       schema,
+      updatedAt: new Date().toISOString(),
     },
   });
   await prisma.disconnect();
