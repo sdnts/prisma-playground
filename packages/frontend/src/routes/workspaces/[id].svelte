@@ -5,15 +5,16 @@
     const { id } = page.params;
 
     try {
-      const res = await this.fetch(`${API_URL}/workspaces/${id}`);
+      const res = await fetch(`${API_URL}/workspaces/${id}`);
       const { error, workspace } = await res.json();
 
       if (res.status === 404) {
+        console.error("Workspace not found with ID: ", id);
         return this.error(404, "Not found");
       }
 
       if (res.status !== 200 || error) {
-        return this.error(500, "Internal Server Error");
+        throw error;
       }
 
       return { workspace };
