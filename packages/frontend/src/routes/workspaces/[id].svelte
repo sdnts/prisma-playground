@@ -5,8 +5,12 @@
     const { id } = page.params;
 
     try {
+      console.log("Fetching workspace");
+
       const res = await this.fetch(`${API_URL}/workspaces/${id}`);
       const { error, workspace } = await res.json();
+
+      console.log("Fetched workspace", error, workspace);
 
       if (res.status === 404) {
         console.error("Workspace not found with ID: ", id);
