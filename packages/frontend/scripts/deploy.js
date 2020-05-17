@@ -20,10 +20,13 @@ const exec = (command, options) =>
     console.log("✅ Built Sapper app");
 
     await exec(`mkdir -p archive`);
+    await exec(`npm prune --production`); // Remove devDependencies
     await exec(`cp -R node_modules archive`);
     await exec(`cp -R __sapper__ archive`);
     await exec(`cp -R static archive`);
     await exec(`cp -R src/index.js archive`);
+    !process.env.CI && (await exec(`yarn`)); // Add devDependencies back if not on CI
+
     console.log("✅ Generated archive");
 
     await exec("zip -r archive.zip .", { cwd: output });
