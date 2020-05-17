@@ -45,7 +45,6 @@ export default async function post(
       // @prisma/client
       "node_modules/@prisma/client/*.d.ts",
       "node_modules/@prisma/client/*.md",
-      "node_modules/@prisma/client/generator-build",
       "node_modules/@prisma/client/runtime/*.d.ts",
       "node_modules/@prisma/client/runtime/*.map",
       "node_modules/@prisma/client/runtime/highlight",

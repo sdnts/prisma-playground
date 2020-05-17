@@ -88,7 +88,10 @@ export default async function put(
 
   // If the schema has changed, migrate up!
   if (schema && workspace.schema !== schema) {
-    // Migrate
+    // First, write the new schema to disk
+    await exec(`cat <<EOF > ${tmpDirectory}/schema.prisma \n${schema}\nEOF`); // Create the schema file
+
+    // Migrate save & up
     try {
       await exec(
         [
@@ -154,7 +157,6 @@ export default async function put(
         // @prisma/client
         "node_modules/@prisma/client/*.d.ts",
         "node_modules/@prisma/client/*.md",
-        "node_modules/@prisma/client/generator-build",
         "node_modules/@prisma/client/runtime/*.d.ts",
         "node_modules/@prisma/client/runtime/*.map",
         "node_modules/@prisma/client/runtime/highlight",
