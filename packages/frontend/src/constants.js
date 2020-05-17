@@ -1,1 +1,1 @@
-export const API_URL = "https://api.siddhant.is/prisma-playground";
+export const API_URL = "https://prisma-playground.sidmak.es";
