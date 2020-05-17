@@ -1,15 +1,16 @@
 import sirv from "sirv";
-import polka from "polka";
+import express from "express";
 import compression from "compression";
 import * as sapper from "@sapper/server";
 
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === "development";
 
-const server = polka().use(
+const server = express().use(
   // "/portable/dbs",
   compression({ threshold: 0 }),
-  sirv("static", { dev }),
+  // sirv("static", { dev }),
+  express.static("static"),
   sapper.middleware()
 );
 
