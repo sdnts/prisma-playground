@@ -92,7 +92,7 @@ export default async function put(
     try {
       await exec(
         [
-          "./node_modules/@prisma/cli/build/index.js",
+          "node ./node_modules/@prisma/cli/build/index.js",
           "migrate save --experimental",
           "--create-db",
           '--name ""',
@@ -112,7 +112,7 @@ export default async function put(
     try {
       await exec(
         [
-          "./node_modules/@prisma/cli/build/index.js",
+          "node ./node_modules/@prisma/cli/build/index.js",
           "migrate up --experimental",
         ].join(" "),
         {
@@ -131,7 +131,9 @@ export default async function put(
     // And then generate Prisma Client for the workspace (since schema changed)
     try {
       await exec(
-        ["./node_modules/@prisma/cli/build/index.js", "generate"].join(" "),
+        ["node ./node_modules/@prisma/cli/build/index.js", "generate"].join(
+          " "
+        ),
         {
           cwd: tmpDirectory,
           env: {

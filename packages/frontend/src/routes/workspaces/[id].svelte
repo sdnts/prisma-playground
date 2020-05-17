@@ -5,12 +5,8 @@
     const { id } = page.params;
 
     try {
-      console.log("Fetching workspace");
-
       const res = await this.fetch(`${API_URL}/workspaces/${id}`);
       const { error, workspace } = await res.json();
-
-      console.log("Fetched workspace", error, workspace);
 
       if (res.status === 404) {
         console.error("Workspace not found with ID: ", id);
@@ -77,7 +73,31 @@
     }
   };
 
-  export let saveSchema = async () => {};
+  export let saveSchema = async () => {
+    try {
+      console.log("saving");
+      saving.set(true);
+
+      let response = await fetch(`${API_URL}/workspaces/${workspace.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ schema: $schema })
+      });
+      response = await response.json();
+      console.log("Response: ", response);
+
+      stdout.set(response.output.stdout);
+      stderr.set(response.output.stderr);
+    } catch (e) {
+      console.log("Error in PUT request: ", e);
+      stderr.set(e.toString());
+    } finally {
+      saving.set(false);
+      outputVisible.set(true);
+    }
+  };
 </script>
 
 <style>
