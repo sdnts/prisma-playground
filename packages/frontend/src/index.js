@@ -10,7 +10,7 @@ process.env.PORT = process.env.PORT || 3000;
 
 exports.handler = (event, context) => {
   console.log("Incoming Request: ", event);
-  const response = serverless(app)(event, context);
+  const response = await serverless(app)(event, context);
   console.log("Responding with: ", response);
   return response;
 };
