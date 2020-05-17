@@ -4,10 +4,10 @@ const { handler } = require("../archive/index");
   try {
     const res = await handler({
       httpMethod: "GET",
-      path: "/client/[id].78f2886e.js",
+      path: "/workspaces/2a805473-7f6a-420d-bc22-e07d2559d27d",
     });
 
-    console.log(res);
+    console.log("Response: ", res);
   } catch (e) {
     console.log("Error: ", e);
   }
