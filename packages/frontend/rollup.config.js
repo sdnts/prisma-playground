@@ -41,7 +41,6 @@ export default {
     ],
 
     onwarn,
-    preserveEntrySignatures: false,
   },
 
   server: {
