@@ -1,7 +1,0 @@
-name = "prisma"
-type = "webpack"
-workers_dev = true
-
-[site]
-entry-point = "."
-bucket = "./__sapper__/export"
