@@ -7,10 +7,10 @@
     const res = await fetch(`${API_URL}/workspaces`, {
       method: "POST"
     });
-    const workspace = await res.json();
+    const { workspace } = await res.json();
 
     console.log("Created workspace", workspace);
-    await goto(`/workspace/${workspace.id}`);
+    await goto(`/workspaces/${workspace.id}`);
   }
 </script>
 

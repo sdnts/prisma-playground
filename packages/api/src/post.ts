@@ -80,7 +80,7 @@ export default async function post(
   try {
     await exec(
       [
-        "./node_modules/@prisma/cli/build/index.js",
+        "node ./node_modules/@prisma/cli/build/index.js",
         "migrate save --experimental",
         "--create-db",
         '--name "Initial"',
@@ -99,7 +99,7 @@ export default async function post(
   try {
     await exec(
       [
-        "./node_modules/@prisma/cli/build/index.js",
+        "node ./node_modules/@prisma/cli/build/index.js",
         "migrate up --experimental",
       ].join(" "),
       {
@@ -120,7 +120,7 @@ export default async function post(
   // Generate Prisma Client for the workspace
   try {
     await exec(
-      ["./node_modules/@prisma/cli/build/index.js", "generate"].join(" "),
+      ["node ./node_modules/@prisma/cli/build/index.js", "generate"].join(" "),
       {
         cwd: tmpDirectory,
         env: {
@@ -129,7 +129,6 @@ export default async function post(
         },
       }
     );
-    console.log("PRISMA GENERATE");
   } catch (e) {
     // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
