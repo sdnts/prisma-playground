@@ -5,7 +5,7 @@
     const { id } = page.params;
 
     try {
-      const res = await fetch(`${API_URL}/workspaces/${id}`);
+      const res = await this.fetch(`${API_URL}/workspaces/${id}`);
       const { error, workspace } = await res.json();
 
       if (res.status === 404) {
