@@ -4,7 +4,8 @@
   "scripts": {
     "start": "sapper dev",
     "build": "sapper build",
-    "deploy": "node ./scripts/deploy.js"
+    "deploy": "node ./scripts/deploy.js",
+    "test": "node ./scripts/test.js"
   },
   "dependencies": {
     "compression": "^1.7.1",
