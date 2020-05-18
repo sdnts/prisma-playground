@@ -1,0 +1,22 @@
+on:
+  push:
+    paths:
+      - "packages/reaper/**"
+name: Deploy API
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  deploy-reaper:
+    defaults:
+      run:
+        working-directory: packages/reaper
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: install
+        run: npm install
+      - name: deploy
+        run: npm run deploy

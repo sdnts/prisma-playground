@@ -1,0 +1,12 @@
+{
+  "name": "reaper",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "deploy": "node ./scripts/deploy.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0",
+    "pg": "^8.2.1"
+  }
+}
