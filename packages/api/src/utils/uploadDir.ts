@@ -38,7 +38,7 @@ export default async function uploadDir(dir: string) {
     await s3
       .putObject({
         Bucket: "prisma-playground",
-        Key: file.replace("/tmp/", "workspace/"),
+        Key: file.replace("/tmp/", "workspaces/"),
         Body: await fs.readFile(file),
       })
       .promise();

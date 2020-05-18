@@ -9,8 +9,13 @@ packages/frontend/__sapper__
 packages/frontend/archive
 packages/frontend/archive.zip
 
-# Lambdas
+# API
 packages/api/node_modules/
 packages/api/archive
 packages/api/archive.zip
 packages/api/.env
+
+# Reaper
+packages/reaper/node_modules/
+packages/reaper/archive
+packages/reaper/archive.zip

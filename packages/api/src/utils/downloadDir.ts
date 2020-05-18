@@ -15,7 +15,7 @@ const pipeline = promisify(stream.pipeline);
  * @param fileName Key of the file to download
  */
 async function downloadFile(s3: AWS.S3, fileName: string): Promise<void> {
-  const destination = fileName.replace("workspace/", "/tmp/");
+  const destination = fileName.replace("workspaces/", "/tmp/");
 
   // Make sure the folder where the download is suppsoed to go exists
   await exec(`mkdir -p ${path.dirname(destination)}`);

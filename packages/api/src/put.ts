@@ -82,7 +82,7 @@ export default async function put(
 
   // Copy over this workspace's file system from S3
   await exec(`rm -rf ${tmpDirectory}`);
-  await downloadDir(`workspace/${id}`);
+  await downloadDir(`workspaces/${id}`);
   process.env.DEBUG &&
     console.log(`✅[put] Downloaded relevant files from S3 in ${tmpDirectory}`);
 
