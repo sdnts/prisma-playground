@@ -203,8 +203,8 @@ export default async function put(
       console.log(`✅[put] Uploaded relevant files to S3 from ${tmpDirectory}`);
   }
 
-  if (code && workspace.code !== code) {
-    // If code changed, run it
+  if (code) {
+    // If code was requested to be run, run it. Here we do not care if it was actually changed
     output = await runJS(code, {
       workspace: { dir: tmpDirectory, dbUrl: workspaceDbUrl },
     });
