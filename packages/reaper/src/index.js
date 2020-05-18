@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 // I'm sorry Prisma, I need to drop a DB and you can't do that
 const { Client } = require("pg");
 
-exports.handler = async (event) => {
+exports.handler = async () => {
   let response = "";
   const { error, workspace } = await fetch(
     "https://prisma-playground.sidmak.es/workspaces"
