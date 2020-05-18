@@ -2,8 +2,9 @@
   --bg-color: #212121;
   --fg-color: #eeffff;
   --accent-color: #6eeb83;
+  --error-color: #f15f5f;
 
-  --inactive-color: #545454;
+  --inactive-color: #727272;
   --border-color: #545454;
   --icon-color: #545454;
 
@@ -17,10 +18,8 @@ body {
   color: var(--fg-color);
   font-family: monospace;
   font-size: 14px;
-}
-
-#sapper {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  position: relative;
 }

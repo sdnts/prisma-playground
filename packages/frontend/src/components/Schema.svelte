@@ -36,6 +36,6 @@
 </style>
 
 <section class="schema" />
-<Button title="Save Schema" on:click={save} disabled={$saving}>
-  {#if $saving}·{:else}✓{/if}
+<Button title="Save Schema & Migrate" on:click={save} disabled={$saving}>
+  {#if $saving}⊙{:else}🦅{/if}
 </Button>

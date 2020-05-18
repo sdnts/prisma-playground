@@ -2,6 +2,7 @@
   import { running } from "../stores/code";
 
   export let title;
+  export let disabled;
 </script>
 
 <style>
@@ -34,6 +35,6 @@
   }
 </style>
 
-<button on:click {title}>
+<button on:click {title} {disabled}>
   <slot />
 </button>

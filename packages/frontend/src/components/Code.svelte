@@ -38,5 +38,5 @@
 
 <section class="code" />
 <Button title="Run Code" on:click={run} disabled={$running}>
-  {#if $running}·{:else}ᐈ{/if}
+  {#if $running}⊙{:else}ᐈ{/if}
 </Button>

@@ -104,7 +104,7 @@
   .editors span {
     position: absolute;
     bottom: 10px;
-    color: var(--border-color);
+    color: var(--inactive-color);
     font-size: 12px;
   }
 

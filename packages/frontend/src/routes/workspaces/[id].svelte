@@ -34,11 +34,17 @@
     stderr,
     visible as outputVisible
   } from "../../stores/output";
+  import {
+    level as toastLevel,
+    visible as toastVisible,
+    messages as toastMessages
+  } from "../../stores/toast";
 
   import Tab from "../../components/Tab.svelte";
   import Code from "../../components/Code.svelte";
   import Schema from "../../components/Schema.svelte";
   import Output from "../../components/Output.svelte";
+  import Toast from "../../components/Toast.svelte";
 
   export let workspace;
 
@@ -50,6 +56,9 @@
 
   export let runCode = async () => {
     try {
+      toastLevel.set("INFO");
+      toastMessages.set(["Running code", "Running code", "Any second now"]);
+      toastVisible.set(true);
       running.set(true);
 
       let response = await fetch(`${API_URL}/workspaces/${workspace.id}`, {
@@ -62,11 +71,14 @@
       response = await response.json();
       console.log("Response: ", response);
 
+      toastVisible.set(false);
       stdout.set(response.output.stdout);
       stderr.set(response.output.stderr);
     } catch (e) {
       console.log("Error in PUT request: ", e);
       stderr.set(e.toString());
+      toastLevel.set("ERROR");
+      toastMessages.set(["Something ain't right. Check the DevTools Console."]);
     } finally {
       running.set(false);
       outputVisible.set(true);
@@ -75,7 +87,13 @@
 
   export let saveSchema = async () => {
     try {
-      console.log("saving");
+      toastLevel.set("INFO");
+      toastMessages.set([
+        "Migrating your database",
+        "Saving schema",
+        "Any second now"
+      ]);
+      toastVisible.set(true);
       saving.set(true);
 
       let response = await fetch(`${API_URL}/workspaces/${workspace.id}`, {
@@ -88,11 +106,14 @@
       response = await response.json();
       console.log("Response: ", response);
 
+      toastVisible.set(false);
       stdout.set(response.output.stdout);
       stderr.set(response.output.stderr);
     } catch (e) {
       console.log("Error in PUT request: ", e);
       stderr.set(e.toString());
+      toastLevel.set("ERROR");
+      toastMessages.set(["Something ain't right. Check the DevTools Console."]);
     } finally {
       saving.set(false);
       outputVisible.set(true);
@@ -126,4 +147,5 @@
   {/if}
 
   <Output />
+  <Toast />
 </main>
