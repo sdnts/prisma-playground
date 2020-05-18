@@ -31,13 +31,7 @@
   let run = () => dispatch("run");
 </script>
 
-<style>
-  section {
-    flex: 1;
-  }
-</style>
-
-<section class="code" />
+<div class="code" />
 <Button title="Run Code" on:click={run} disabled={$running}>
   {#if $running}⊙{:else}ᐈ{/if}
 </Button>

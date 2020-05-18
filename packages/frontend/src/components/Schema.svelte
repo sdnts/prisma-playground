@@ -30,13 +30,7 @@
   let save = () => dispatch("save");
 </script>
 
-<style>
-  section {
-    flex: 1;
-  }
-</style>
-
-<section class="schema" />
+<div class="schema" />
 <Button title="Save Schema & Migrate" on:click={save} disabled={$saving}>
   {#if $saving}⊙{:else}🦅{/if}
 </Button>

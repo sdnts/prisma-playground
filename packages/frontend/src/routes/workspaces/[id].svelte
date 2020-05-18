@@ -143,6 +143,11 @@
     flex: 0 0 30px;
     margin-bottom: 10px;
   }
+
+  section {
+    flex: 1;
+    overflow: scroll;
+  }
 </style>
 
 <main>
@@ -152,9 +157,13 @@
   </nav>
 
   {#if $active === 'code'}
-    <Code on:run={runCode} />
+    <section>
+      <Code on:run={runCode} />
+    </section>
   {:else if $active === 'schema'}
-    <Schema on:save={saveSchema} />
+    <section>
+      <Schema on:save={saveSchema} />
+    </section>
   {/if}
 
   <Output />

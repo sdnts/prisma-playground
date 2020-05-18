@@ -8,6 +8,7 @@
     const stdoutRoot = document.querySelector(".stdout");
     const stdoutEditor = CodeMirror(stdoutRoot, {
       value: $stdout,
+      lineWrapping: true,
       mode: "application/ld+json",
       theme: "material-darker",
       readOnly: true
@@ -18,6 +19,7 @@
     const stderrRoot = document.querySelector(".stderr");
     const stderrEditor = CodeMirror(stderrRoot, {
       value: $stderr,
+      lineWrapping: true,
       mode: "application/ld+json",
       theme: "material-darker",
       readOnly: true
@@ -27,13 +29,12 @@
   });
 
   let toggle = () => {
-    console.log("tuggli");
     visible.set(!$visible);
   };
 </script>
 
 <style>
-  section {
+  .container {
     display: flex;
     flex-direction: column;
     font-family: monospace;
@@ -92,9 +93,15 @@
     flex: 1;
   }
 
+  .editors section {
+    flex: 1;
+    overflow: scroll;
+    height: 260px;
+  }
+
   .stdout,
   .stderr {
-    flex: 1;
+    height: 100%;
   }
 
   .stdout {
@@ -108,25 +115,30 @@
     font-size: 12px;
   }
 
-  .editors span:nth-of-type(1) {
+  .stdout-label {
     left: 10px;
   }
 
-  .editors span:nth-of-type(2) {
+  .stderr-label {
     left: calc(50% + 10px);
   }
 </style>
 
-<section style="flex: 0 0 {$visible ? 300 : 30}px;">
+<section class="container" style="flex: 0 0 {$visible ? 300 : 30}px;">
   <header>
     <Tab active={$visible} on:click={toggle}>Output</Tab>
     <button class:open={$visible} on:click={toggle} />
   </header>
 
   <div class="editors" class:visible={$visible}>
-    <div class="stdout" />
-    <div class="stderr" />
-    <span>stdout</span>
-    <span>stderr</span>
+    <section>
+      <div class="stdout" />
+      <span class="stdout-label">stdout</span>
+    </section>
+
+    <section>
+      <div class="stderr" />
+      <span class="stderr-label">stderr</span>
+    </section>
   </div>
 </section>
