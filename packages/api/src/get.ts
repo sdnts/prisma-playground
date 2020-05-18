@@ -21,7 +21,13 @@ export default async function get(
   let workspace;
   const prisma = new PrismaClient();
   if (!id) {
-    workspace = await prisma.workspace.findMany();
+    // If no specific workspace is fetched, return all workspaces that are more than a week old
+    // Yeah this isn't the prettiest of designs lmao
+    const today = new Date().getTime();
+    const week = 7 * 24 * 60 * 60 * 1000;
+    workspace = await prisma.workspace.findMany({
+      where: { updatedAt: { lte: new Date(today - week).toISOString() } },
+    });
   } else {
     workspace = await prisma.workspace.findOne({ where: { id } });
   }
