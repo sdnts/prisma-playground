@@ -84,7 +84,6 @@ export default async function post(
         "migrate save --experimental",
         "--create-db",
         "--auto-approve",
-        "--force",
         '--name "Initial"',
       ].join(" "),
       {
@@ -104,7 +103,6 @@ export default async function post(
         "node ./node_modules/@prisma/cli/build/index.js",
         "migrate up --experimental",
         "--auto-approve",
-        "--force",
       ].join(" "),
       {
         cwd: tmpDirectory,
