@@ -6,32 +6,56 @@
 </script>
 
 <style>
-  h1,
-  p {
-    margin: 0 auto;
+  section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 80px;
   }
 
   h1 {
-    font-size: 2.8em;
-    font-weight: 700;
-    margin: 0 0 0.5em 0;
+    color: var(--accent-color);
+    font-size: 48px;
+    font-weight: normal;
+    margin: 0;
+    margin-bottom: 40px;
+  }
+
+  h3 {
+    color: var(--fg-color);
+    font-size: 24px;
+    font-weight: normal;
+    margin: 0;
+    margin-bottom: 30px;
   }
 
   p {
-    margin: 1em auto;
+    color: var(--fg-color);
+    font-size: 16px;
+    margin-bottom: 10px;
   }
 
-  @media (min-width: 480px) {
-    h1 {
-      font-size: 4em;
-    }
+  p.explain {
+    opacity: 0.4;
+    font-size: 14px;
   }
 </style>
 
-<h1>{status}</h1>
+<section>
+  <h1>{status}</h1>
 
-<p>{error.message}</p>
+  {#if status === 404}
+    <h3>Nothing here.</h3>
+    <p>The workspace you requested is now in a better place.</p>
+    <p class="explain">
+      (Workspaces that stay inactive for 7 days are automatically deleted)
+    </p>
+  {:else}
+    <h3>{error.message}</h3>
+  {/if}
 
-<!-- {#if dev && error.stack} -->
-<pre>{error.stack}</pre>
-<!-- {/if} -->
+  {#if dev && error.stack}
+    <pre>{error.stack}</pre>
+  {/if}
+
+</section>
