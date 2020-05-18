@@ -12,7 +12,7 @@
       interval && clearInterval(interval);
     } else {
       activeIndex = 0;
-      interval = setInterval(setNextMessage, 3000);
+      interval = setInterval(setNextMessage, 5000);
     }
   }
 </script>

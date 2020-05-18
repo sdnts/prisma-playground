@@ -23,8 +23,10 @@
       const res = await fetch(`${API_URL}/workspaces`, {
         method: "POST"
       });
-      const { workspace } = await res.json();
+      const response = await res.json();
       console.log("Response: ", response);
+
+      const { workspace } = response;
 
       toastVisible.set(false);
       await goto(`/workspaces/${workspace.id}`);
