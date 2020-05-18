@@ -98,7 +98,6 @@ export default async function put(
           "node ./node_modules/@prisma/cli/build/index.js",
           "migrate save --experimental",
           "--create-db",
-          "--auto-approve",
           '--name ""',
         ].join(" "),
         {

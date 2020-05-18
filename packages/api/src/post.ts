@@ -83,7 +83,6 @@ export default async function post(
         "node ./node_modules/@prisma/cli/build/index.js",
         "migrate save --experimental",
         "--create-db",
-        "--auto-approve",
         '--name "Initial"',
       ].join(" "),
       {
