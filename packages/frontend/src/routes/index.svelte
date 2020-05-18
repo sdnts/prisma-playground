@@ -16,7 +16,12 @@
         "Provisioning database",
         "Setting up defaults",
         "Any second now",
-        "So... weather's nice, huh?"
+        "So... weather's nice, huh?",
+        "Er... I swear it's working",
+        "I really appreciate your patience",
+        "If you're seeing this, you've been waiting way too long",
+        "You know what, something's probably broken",
+        "Yeah, shoot an email to me@madebysid.com please!"
       ]);
       toastVisible.set(true);
 
@@ -29,7 +34,7 @@
       const { workspace } = response;
 
       toastVisible.set(false);
-      await goto(`/workspaces/${workspace.id}`);
+      await goto(`./workspaces/${workspace.id}`);
     } catch (e) {
       console.log("Error in POST request: ", e);
       toastLevel.set("ERROR");
