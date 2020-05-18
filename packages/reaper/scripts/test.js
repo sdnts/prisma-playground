@@ -1,4 +1,4 @@
-const { handler } = require("../archive/index");
+const { handler } = require("../src/index");
 
 (async () => {
   const response = await handler();

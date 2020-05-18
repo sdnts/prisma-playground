@@ -3,7 +3,6 @@ const fetch = require("node-fetch");
 const { Client } = require("pg");
 
 exports.handler = async () => {
-  let response = "";
   const { error, workspace } = await fetch(
     "https://prisma-playground.sidmak.es/workspaces"
   ).then((res) => res.json());
@@ -22,7 +21,7 @@ exports.handler = async () => {
     await fetch(`https://prisma-playground.sidmak.es/workspaces/${w.id}`, {
       method: "DELETE",
     });
-    await pg.query(`DROP DATABASE ${w.id}`);
+    await pg.query(`DROP DATABASE "${w.id}"`);
   }
   await pg.end();
 

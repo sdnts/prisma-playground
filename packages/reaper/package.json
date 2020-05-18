@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
+    "test": "node ./scripts/test.js",
     "deploy": "node ./scripts/deploy.js"
   },
   "dependencies": {
