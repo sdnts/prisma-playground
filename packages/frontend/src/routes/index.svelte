@@ -102,10 +102,9 @@
     <h1>This is a Prisma Playground.</h1>
 
     <h3>
-      A "workspace" is a portable Prisma project. Each workspace is backed by a
-      real Postgres database that you can query using Prisma Client. You can
-      also change the database's schema by changing it in the `Schema` tab of
-      the app.
+      A "workspace" here is a portable Prisma project. Each workspace is backed
+      by a real Postgres database that you can query using Prisma Client. You
+      can also change the database's schema and it will migrate automatically!
     </h3>
 
     <h3>
