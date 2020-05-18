@@ -24,7 +24,7 @@ exports.handler = async (event) => {
     });
     await pg.query(`DROP DATABASE ${w.id}`);
   }
-  await client.end();
+  await pg.end();
 
   return {
     statusCode: 200,
