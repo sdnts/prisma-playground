@@ -34,7 +34,7 @@
       const { workspace } = response;
 
       toastVisible.set(false);
-      await goto(`./workspaces/${workspace.id}`);
+      await goto(`${window.location.toString()}/workspaces/${workspace.id}`);
     } catch (e) {
       console.log("Error in POST request: ", e);
       toastLevel.set("ERROR");
