@@ -7,7 +7,7 @@ const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === "development";
 
 const server = polka().use(
-  // "/portable/dbs",
+  "/glass/triangles",
   compression({ threshold: 0 }),
   sirv("static", { dev }),
   sapper.middleware()
