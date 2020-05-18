@@ -57,7 +57,13 @@
   export let runCode = async () => {
     try {
       toastLevel.set("INFO");
-      toastMessages.set(["Running code", "Running code", "Any second now"]);
+      toastMessages.set([
+        "Running code",
+        "Running code",
+        "Any second now",
+        "Wow, you're patient",
+        "*drumroll*"
+      ]);
       toastVisible.set(true);
       running.set(true);
 
@@ -90,8 +96,13 @@
       toastLevel.set("INFO");
       toastMessages.set([
         "Migrating your database",
+        "Still working",
         "Saving schema",
-        "Any second now"
+        "Any second now",
+        "Things really do take a while huh",
+        "Well Lambdas aren't the fastest",
+        "*drumroll*",
+        "I swear it works"
       ]);
       toastVisible.set(true);
       saving.set(true);
