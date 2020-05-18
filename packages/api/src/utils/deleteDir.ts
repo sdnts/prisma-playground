@@ -7,8 +7,9 @@ import AWS from "aws-sdk";
  */
 export default async function downloadDir(dir: string) {
   const s3 = new AWS.S3();
+  process.env.DEBUG && console.log("[deleteDir] Deleting from S3: ", dir);
 
-  // Get a  list of all files in this directory (workspace)
+  // Delete the workspace at this key (this will also delete any subfolders)
   await s3
     .deleteObject({
       Bucket: "prisma-playground",

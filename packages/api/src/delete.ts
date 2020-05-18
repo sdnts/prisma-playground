@@ -31,7 +31,7 @@ export default async function del(
   // The workpsace's DB is already deleted by Reaper, so we don't have to do it here
 
   // Delete this workspace from S3
-  await deleteDir(`/workspaces/${id}`);
+  await deleteDir(`workspaces/${id}`);
 
   // Delete this workspace from our DB
   const prisma = new PrismaClient();
