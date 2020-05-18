@@ -1,6 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { PrismaClient } from "@prisma/client";
 
+import deleteDir from "./utils/deleteDir";
+
 /**
  * Handles DELETE requests to this Lambda
  *
@@ -26,7 +28,10 @@ export default async function del(
     };
   }
 
-  // TODO:: Delete this workspace from S3
+  // The workpsace's DB is already deleted by Reaper, so we don't have to do it here
+
+  // Delete this workspace from S3
+  deleteDir(`/workspaces/${id}`);
 
   // Delete this workspace from our DB
   const prisma = new PrismaClient();
