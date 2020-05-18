@@ -2,7 +2,7 @@
   "name": "lambda",
   "version": "0.0.1",
   "scripts": {
-    "test": "jest src/__tests__/runJS.spec.ts --setupFiles dotenv/config",
+    "test": "jest src/__tests__/deleteDir.spec.ts --setupFiles dotenv/config",
     "deploy": "ts-node scripts/deploy.ts",
     "generate": "prisma generate",
     "migrate": "prisma migrate save --experimental && prisma migrate up --experimental"

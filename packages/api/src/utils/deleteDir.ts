@@ -9,11 +9,25 @@ export default async function downloadDir(dir: string) {
   const s3 = new AWS.S3();
   process.env.DEBUG && console.log("[deleteDir] Deleting from S3: ", dir);
 
-  // Delete the workspace at this key (this will also delete any subfolders)
-  await s3
-    .deleteObject({
+  // Get a list of everything in this dir
+  const s3Objects = await s3
+    .listObjects({
       Bucket: "prisma-playground",
-      Key: dir,
+      Prefix: dir,
+    })
+    .promise();
+
+  if (!s3Objects.Contents || s3Objects.Contents.length === 0) {
+    return Promise.resolve();
+  }
+
+  // Delete the workspace at this key (this will also delete any subfolders)
+  return s3
+    .deleteObjects({
+      Bucket: "prisma-playground",
+      Delete: {
+        Objects: s3Objects.Contents.map((c) => ({ Key: c.Key! })) || [],
+      },
     })
     .promise();
 }
