@@ -29,15 +29,22 @@
     margin-bottom: 30px;
   }
 
-  p {
+  p,
+  a {
     color: var(--fg-color);
     font-size: 16px;
     margin-bottom: 10px;
   }
 
+  a:visited,
+  a:active {
+    color: var(--fg-color);
+  }
+
   p.explain {
     opacity: 0.4;
     font-size: 14px;
+    margin-bottom: 60px;
   }
 </style>
 
@@ -53,6 +60,8 @@
   {:else}
     <h3>{error.message}</h3>
   {/if}
+
+  <a href="/glass/triangles">Back Home</a>
 
   {#if dev && error.stack}
     <pre>{error.stack}</pre>
