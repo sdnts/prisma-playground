@@ -86,6 +86,10 @@ export default async function put(
   process.env.DEBUG &&
     console.log(`✅[put] Downloaded relevant files from S3 in ${tmpDirectory}`);
 
+  let output = {
+    stdout: "",
+    stderr: "",
+  };
   // If the schema has changed, migrate up!
   if (schema && workspace.schema !== schema) {
     // First, write the new schema to disk
@@ -93,11 +97,10 @@ export default async function put(
 
     // Migrate save & up
     try {
-      await exec(
+      const { stdout, stderr } = await exec(
         [
           "node ./node_modules/@prisma/cli/build/index.js",
           "migrate save --experimental",
-          "--create-db",
           '--name ""',
         ].join(" "),
         {
@@ -108,12 +111,17 @@ export default async function put(
           },
         }
       );
+      output.stderr += stderr;
+      output.stdout += stdout;
     } catch (e) {
+      process.env.DEBUG && console.log(`[put] Error during migrate save: `, e);
+      output.stderr += e.stderr;
+      output.stdout += e.stdout;
       // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
 
     try {
-      await exec(
+      const { stdout, stderr } = await exec(
         [
           "node ./node_modules/@prisma/cli/build/index.js",
           "migrate up --experimental",
@@ -127,14 +135,19 @@ export default async function put(
           },
         }
       );
+      output.stderr += stderr;
+      output.stdout += stdout;
     } catch (e) {
+      process.env.DEBUG && console.log(`[put] Error during migrate up: `, e);
+      output.stderr += e.stderr;
+      output.stdout += e.stdout;
       // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
     process.env.DEBUG && console.log(`✅[put] Migration complete`);
 
     // And then generate Prisma Client for the workspace (since schema changed)
     try {
-      await exec(
+      const { stdout, stderr } = await exec(
         ["node ./node_modules/@prisma/cli/build/index.js", "generate"].join(
           " "
         ),
@@ -146,7 +159,12 @@ export default async function put(
           },
         }
       );
+      output.stderr += stderr;
+      output.stdout += stdout;
     } catch (e) {
+      process.env.DEBUG && console.log(`[put] Error during generate: `, e);
+      output.stderr += e.stderr;
+      output.stdout += e.stdout;
       // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
     }
     process.env.DEBUG && console.log(`✅[put] Client generation complete`);
@@ -180,20 +198,18 @@ export default async function put(
         cwd: tmpDirectory,
       }
     );
-    process.env.DEBUG &&
-      console.log(`✅[put] Removed unnecessary files from ${tmpDirectory}`);
-
-    // Upload `tmpDirectory` directory to S3 for storage
     await uploadDir(tmpDirectory);
     process.env.DEBUG &&
       console.log(`✅[put] Uploaded relevant files to S3 from ${tmpDirectory}`);
   }
 
-  // If either code or schema changed, the code will need to be re-run.
-  const output = await runJS(code, {
-    workspace: { dir: tmpDirectory, dbUrl: workspaceDbUrl },
-  });
-  process.env.DEBUG && console.log(`✅[put] Code run. stdout: ${output}`);
+  if (code && workspace.code !== code) {
+    // If code changed, run it
+    output = await runJS(code, {
+      workspace: { dir: tmpDirectory, dbUrl: workspaceDbUrl },
+    });
+    process.env.DEBUG && console.log(`✅[put] Code run. stdout: ${output}`);
+  }
 
   // And finally, update the workspace with the new code and schema (if changed)
   const updatedWorkspace = await prisma.workspace.update({

@@ -20,16 +20,35 @@ describe("PUT /workspace/{id}", () => {
     const invocation = await handler({
       httpMethod: "PUT",
       pathParameters: {
-        id: "2a805473-7f6a-420d-bc22-e07d2559d27d",
+        id: "test",
       },
       body: JSON.stringify({
-        code,
+        schema: `
+datasource db {
+  provider = "postgres"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id     Int     @id @default(autoincrement())
+  name   String
+  email  String
+  posts  Post[]
+}
+
+model Post {
+  id        Int  @id
+  authorId  Int
+  author    User  @relation(fields: [authorId], references: [id])
+}
+        `.trim(),
       }),
     } as any);
 
-    expect(invocation).toHaveProperty("statusCode", 200);
-    console.log("output: ", JSON.parse(invocation.body).output);
-
-    expect(JSON.parse(invocation.body)).toHaveProperty("output", "output");
+    console.log("output: ", JSON.parse(invocation.body));
   });
 });

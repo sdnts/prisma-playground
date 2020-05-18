@@ -1,6 +1,5 @@
 import { Worker } from "worker_threads";
 import path from "path";
-import { WorkspaceClient } from "@prisma/client";
 
 type RunJSOptions = {
   workspace: {

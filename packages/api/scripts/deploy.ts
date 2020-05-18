@@ -72,9 +72,10 @@ async function main() {
   console.log("✅ Removed unnecessary files from directory");
 
   // Manually download all required binaries for rhel-openssl-1.0.x (Lambda runtime)
-  const binaryVersion = JSON.parse(
-    await exec("cat node_modules/@prisma/cli/package.json", { cwd: output }) // aws-sdk is already in the Lambda runtime
-  ).prisma.version;
+  const { stdout } = await exec("cat node_modules/@prisma/cli/package.json", {
+    cwd: output,
+  });
+  const binaryVersion = JSON.parse(stdout).prisma.version;
   const queryEngineUrl = `https://prisma-builds.s3-eu-west-1.amazonaws.com/master/${binaryVersion}/rhel-openssl-1.0.x/query-engine.gz`;
   const migrationEngineUrl = `https://prisma-builds.s3-eu-west-1.amazonaws.com/master/${binaryVersion}/rhel-openssl-1.0.x/migration-engine.gz`;
 
