@@ -11,6 +11,7 @@
     const root = document.querySelector(".code");
     const editor = CodeMirror(root, {
       value: $code,
+      tabSize: 2,
       lineNumbers: true,
       autoCloseBrackets: true,
       matchBrackets: true,

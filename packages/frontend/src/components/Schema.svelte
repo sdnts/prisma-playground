@@ -10,6 +10,7 @@
     const root = document.querySelector(".schema");
     const editor = CodeMirror(root, {
       value: $schema,
+      tabSize: 2,
       lineNumbers: true,
       autoCloseBrackets: true,
       matchBrackets: true,
