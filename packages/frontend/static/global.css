@@ -16,6 +16,7 @@ body {
   background-color: var(--bg-color);
   color: var(--fg-color);
   font-family: monospace;
+  font-size: 14px;
 }
 
 #sapper {

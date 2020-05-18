@@ -17,6 +17,6 @@ if (dev) {
   server.listen(PORT, (err) => {
     if (err) console.log("error", err);
   });
+} else {
+  module.exports = server;
 }
-
-module.exports = server;

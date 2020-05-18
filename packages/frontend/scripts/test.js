@@ -4,7 +4,7 @@ const { handler } = require("../archive/index");
   try {
     const res = await handler({
       httpMethod: "GET",
-      path: "/workspaces/2a805473-7f6a-420d-bc22-e07d2559d27d",
+      path: "/client/%5Bid%5D.9ef5314b.js",
     });
 
     console.log("Response: ", res);

@@ -4,6 +4,10 @@
   Website:    https://material-theme.site/
 */
 
+.CodeMirror {
+  font-size: 16px;
+}
+
 .cm-s-material-darker.CodeMirror {
   background-color: #212121;
   color: #eeffff;
