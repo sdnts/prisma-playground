@@ -11,25 +11,20 @@ export default async function get(
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> {
   process.env.DEBUG && console.log("✅[get] Received request: ", { event });
-
   const { id } = event.pathParameters || {};
-  if (!id) {
-    return {
-      statusCode: 400,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ error: "Bad Request", workspace: null }),
-    };
-  }
 
   process.env.PRISMA_QUERY_ENGINE_BINARY = path.resolve(
     require.resolve("@prisma/cli"),
     `../../query-engine-${process.env.PRISMA_BINARY_PLATFORM}`
   );
 
+  let workspace;
   const prisma = new PrismaClient();
-  const workspace = await prisma.workspace.findOne({ where: { id } });
+  if (!id) {
+    workspace = await prisma.workspace.findMany();
+  } else {
+    workspace = await prisma.workspace.findOne({ where: { id } });
+  }
   await prisma.disconnect();
 
   if (!workspace) {

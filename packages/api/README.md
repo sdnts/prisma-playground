@@ -1,4 +1,6 @@
-# Lambda
+# api
+
+API for https://sidmak.es/glass/triangles
 
 The Playground's "backend" is a single lambda that manages CRUD operations on workspaces
 
@@ -14,7 +16,7 @@ API Gateway is used to proxy 5 methods to invoke this lambda:
 
 - POST /workspace
 
-  - Creates a workspace. This includes:
+  - Creates a workspace. This includes (in order):
     - Setting up a Prisma project in a temporary directory. This includes a default schema & `@prisma/client` & `@prisma/cli` NPM packages.
     - Creating a database on the RDS instance
     - Migrating up the provisioned database above to the default schema
@@ -28,7 +30,7 @@ API Gateway is used to proxy 5 methods to invoke this lambda:
 
 - PUT /workspace/{id}
 
-  - Makes a change to an existing workspace. This includes:
+  - Makes a change to an existing workspace. This includes (in order):
     - Downloading the workspace file system from S3
     - If a schema change is requested, the provisioned database is migrated to the new schema, Prisma Client is regenerated, and these changed are uploaded back to S3.
     - Running saved code. If a code change is requested, then the changed code is run
@@ -39,6 +41,7 @@ API Gateway is used to proxy 5 methods to invoke this lambda:
     - Deleting the workspace's file system from S3
     - Deleting the provisioned database
     - Deleting the corresponding record in the `Workspace` table of our own database
+    - Called by the `reaper` Lambda
 
 ### Development
 
@@ -47,4 +50,4 @@ NOTE: These are not real tests, it was just simplest to set Jest up for local de
 
 ### Deployment
 
-Any changes to this lambda are automatically deployed when you push to master via a Github Action
+Any changes to this lambda are automatically deployed when you push to master (via a Github Action)
