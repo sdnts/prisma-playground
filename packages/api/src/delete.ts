@@ -1,3 +1,4 @@
+import path from "path";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { PrismaClient } from "@prisma/client";
 
@@ -33,6 +34,10 @@ export default async function del(
   // Delete this workspace from S3
   await deleteDir(`workspaces/${id}`);
 
+  process.env.PRISMA_QUERY_ENGINE_BINARY = path.resolve(
+    require.resolve("@prisma/cli"),
+    `../../query-engine-${process.env.PRISMA_BINARY_PLATFORM}`
+  );
   // Delete this workspace from our DB
   const prisma = new PrismaClient();
   const workspace = await prisma.workspace.delete({
