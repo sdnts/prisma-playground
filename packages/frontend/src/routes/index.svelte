@@ -31,7 +31,10 @@
       const response = await res.json();
       console.log("Response: ", response);
 
-      const { workspace } = response;
+      const { error, workspace } = response;
+      if (!workspace) {
+        throw error;
+      }
 
       toastVisible.set(false);
       await goto(`/glass/triangles/workspaces/${workspace.id}`);

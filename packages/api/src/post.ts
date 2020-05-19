@@ -94,7 +94,7 @@ export default async function post(
       }
     );
   } catch (e) {
-    process.env.DEBUG && console.log(`[put] Error during migrate save: `, e);
+    process.env.DEBUG && console.log(`[post] Error during migrate save: `, e);
     // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
   try {
@@ -113,7 +113,7 @@ export default async function post(
       }
     );
   } catch (e) {
-    process.env.DEBUG && console.log(`[put] Error during migrate up: `, e);
+    process.env.DEBUG && console.log(`[post] Error during migrate up: `, e);
     // Migrate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
   console.log(
@@ -133,7 +133,7 @@ export default async function post(
       }
     );
   } catch (e) {
-    process.env.DEBUG && console.log(`[put] Error during generate: `, e);
+    process.env.DEBUG && console.log(`[post] Error during generate: `, e);
     // Client Generate tries to do something to the user's home directory, which fails on Lambda, so it throws. Ignore it.
   }
   console.log(`✅[post] Generated Prisma Client for workspace ${workspaceId}`);
@@ -153,6 +153,9 @@ export default async function post(
   });
   await prisma.disconnect();
   console.log(`✅[post] Created workspace ${workspaceId}`);
+
+  await exec(`rm -rf ${tmpDirectory}`);
+  console.log(`✅[post] Cleaned up tmpDirectory ${tmpDirectory}`);
 
   // And send it back
   return {

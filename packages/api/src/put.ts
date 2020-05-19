@@ -222,6 +222,9 @@ export default async function put(
   });
   await prisma.disconnect();
 
+  await exec(`rm -rf ${tmpDirectory}`);
+  console.log(`✅[post] Cleaned up tmpDirectory ${tmpDirectory}`);
+
   return {
     statusCode: 200,
     body: JSON.stringify({
